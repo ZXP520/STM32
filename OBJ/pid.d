@@ -17,3 +17,4 @@
 ..\obj\pid.o: ..\HARDWARE\TIMER\include.h
 ..\obj\pid.o: ..\STM32F10x_FWLib\inc\stm32f10x_tim.h
 ..\obj\pid.o: ..\HARDWARE\ADC\adc.h
+..\obj\pid.o: ..\HARDWARE\STMFLASH\stmflash.h

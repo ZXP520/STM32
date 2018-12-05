@@ -17,3 +17,4 @@
 ..\obj\rs485.o: ..\HARDWARE\TIMER\include.h
 ..\obj\rs485.o: ..\HARDWARE\ADC\adc.h
 ..\obj\rs485.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\rs485.o: ..\HARDWARE\STMFLASH\stmflash.h

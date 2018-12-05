@@ -9,6 +9,7 @@
 "..\obj\pid.o"
 "..\obj\runcontrol.o"
 "..\obj\rs485.o"
+"..\obj\stmflash.o"
 "..\obj\delay.o"
 "..\obj\sys.o"
 "..\obj\usart.o"
@@ -20,6 +21,7 @@
 "..\obj\stm32f10x_usart.o"
 "..\obj\stm32f10x_tim.o"
 "..\obj\stm32f10x_adc.o"
+"..\obj\stm32f10x_flash.o"
 --strict --scatter "..\OBJ\USART.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

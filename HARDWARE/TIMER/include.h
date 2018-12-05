@@ -1,10 +1,10 @@
-﻿#ifndef __INCLUDE_H
+#ifndef __INCLUDE_H
 #define __INCLUDE_H
 #include "sys.h"
 #include "stm32f10x_tim.h"
 #include "adc.h"
 #include "stdio.h"
-
+#include "stmflash.h"
 typedef struct 
 {
 	u16 adc;

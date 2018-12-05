@@ -21,5 +21,6 @@
 ..\obj\main.o: ..\HARDWARE\PID\pid.h
 ..\obj\main.o: ..\HARDWARE\TIMER\include.h
 ..\obj\main.o: ..\STM32F10x_FWLib\inc\stm32f10x_tim.h
+..\obj\main.o: ..\HARDWARE\STMFLASH\stmflash.h
 ..\obj\main.o: ..\HARDWARE\RUNCONTROL\runcontrol.h
 ..\obj\main.o: ..\HARDWARE\MODBUS\RS485.h
