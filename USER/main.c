@@ -71,13 +71,13 @@ int main(void)
 		if(Flag_500ms)	//500MS
 		{
 			Flag_500ms=0;
-			testData1=Mach.adc*3.3/4096*1000;//AD采样数据更新到屏幕
+			Cylinder_Data[0]=Mach.adc*3.3/4096*1000;//AD采样数据更新到屏幕
 		}
 		if(Flag_1000ms)  //1S
 		{
 			Flag_1000ms=0;
 			STMFLASH_Read(FLASH_SAVE_ADDR,readdata,2);//读Flash数据
-			printf("%d %d\n",readdata[0],readdata[1]);
+			//printf("%d %d\n",readdata[0],readdata[1]);
 			
 		}
 	}		

@@ -5,6 +5,7 @@
 #include "adc.h"
 #include "stdio.h"
 #include "stmflash.h"
+#include <stdbool.h>
 typedef struct 
 {
 	u16 adc;

@@ -2,8 +2,10 @@
 #include "CRC.h"
 #include "stm32f10x_tim.h"
 #include "include.h"
+#include <string.h>
+
 ///////////////////////////////////////////////////////////
-u32 RS485_Baudrate=9600;//通讯波特率
+u32 RS485_Baudrate=115200;//9600;//通讯波特率
 u8 RS485_Parity=0;//0无校验；1奇校验；2偶校验
 u8 RS485_Addr=1;//从机地址
 u16 RS485_Frame_Distance=4;//数据帧最小间隔（ms),超过此时间则认为是下一帧
@@ -15,15 +17,26 @@ u8 RS485_TX_BUFF[2048];//发送缓冲区
 u16 RS485_TX_CNT=0;//发送计数器
 
 
+
+
 u8 RS485_TX_EN;
 ////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+0x，输出(线圈)位寄存器
+1x，输入(触点)位寄存器
+3x，输入寄存器
+4x，保持寄存器
+*/
+u32 Cylinder_Data[7]={0};//气缸与计数寄存器4x 0-6
+u32 Connect_Data[20]={0};//控制状态寄存器值
+
+
 
 ////////////
 //Modbus寄存器和单片机寄存器的映射关系
 vu32 *Modbus_InputIO[100];//输入开关量寄存器指针(这里使用的是位带操作)
 vu32 *Modbus_OutputIO[100];//输出开关量寄存器指针(这里使用的是位带操作)
-u16 *Modbus_HoldReg[1000];//保持寄存器指针
-u32 testData1=0,testData2=10;
+u16 *Modbus_HoldReg[100];//保持寄存器指针
 
 
 
@@ -124,15 +137,43 @@ void Modbus_RegMap(void)
         Modbus_InputIO[2]=(vu32*)&PEin(2);//KEY2
         Modbus_InputIO[3]=(vu32*)&PAin(0);//KEY3
         
+	
+				memset(Connect_Data,NULL,sizeof(Connect_Data));
         //输出开关量寄存器指针指向
-        Modbus_OutputIO[0]=(vu32*)&PBout(5);//LED3
-        Modbus_OutputIO[1]=(vu32*)&PEout(5);//LED2
+        Modbus_OutputIO[0]=(vu32*)&Connect_Data[0];//启动暂停
+				Modbus_OutputIO[1]=(vu32*)&Connect_Data[1];//急停
+				Modbus_OutputIO[2]=(vu32*)&Connect_Data[2];//计数清零
+				Modbus_OutputIO[3]=(vu32*)&Connect_Data[3];//整机复位
+				Modbus_OutputIO[4]=(vu32*)&Connect_Data[4];//瓶身上料
+				Modbus_OutputIO[5]=(vu32*)&Connect_Data[5];//內构上料
+				Modbus_OutputIO[6]=(vu32*)&Connect_Data[6];//瓶盖上料
+				Modbus_OutputIO[7]=(vu32*)&Connect_Data[7];//旋转气缸控制-內构
+				Modbus_OutputIO[8]=(vu32*)&Connect_Data[8];//旋转气缸控制-瓶盖
+				Modbus_OutputIO[9]=(vu32*)&Connect_Data[9];//拧瓶控制
+				Modbus_OutputIO[10]=(vu32*)&Connect_Data[10];//推料气缸控制-內构
+				Modbus_OutputIO[11]=(vu32*)&Connect_Data[11];//推料气缸控制-瓶盖
+				Modbus_OutputIO[12]=(vu32*)&Connect_Data[12];//转盘控制
+				Modbus_OutputIO[13]=(vu32*)&Connect_Data[13];//压料气缸控制-內构
+			  Modbus_OutputIO[14]=(vu32*)&Connect_Data[14];//压料气缸控制-瓶盖
+				
+	
         
+				
+				Cylinder_Data[1]=0;
+				Cylinder_Data[2]=1;
+				Cylinder_Data[3]=2;
+				Cylinder_Data[4]=0;
+				Cylinder_Data[5]=1;
+				Cylinder_Data[6]=2;
         //保持寄存器指针指向
-        Modbus_HoldReg[0]=(u16*)&testData1;//测试数据1 
-        Modbus_HoldReg[1]=((u16*)&testData1)+1;//测试数据1 
-        Modbus_HoldReg[2]=(u16*)&testData2;//测试数据2
-        Modbus_HoldReg[3]=((u16*)&testData2)+1;//测试数据2 
+        Modbus_HoldReg[0]=(u16*)&Cylinder_Data[0];//产量计数 
+        Modbus_HoldReg[1]=(u16*)&Cylinder_Data[1];//旋转气缸位置-內构   0-初  1-末  2-中
+        Modbus_HoldReg[2]=(u16*)&Cylinder_Data[2];//推料气缸位置
+        Modbus_HoldReg[3]=(u16*)&Cylinder_Data[3];//压料气缸位置 
+				
+				Modbus_HoldReg[4]=(u16*)&Cylinder_Data[4];//旋转气缸位置-瓶盖		0-初  1-末  2-中
+				Modbus_HoldReg[5]=(u16*)&Cylinder_Data[5];//推料气缸位置 
+				Modbus_HoldReg[6]=(u16*)&Cylinder_Data[6];//压料气缸位置 
         
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,6 +230,8 @@ void RS485_Init(void)
         USART_Cmd(USART2,ENABLE);//使能串口2
         RS485_TX_EN=0;//默认为接收模式
         
+				
+				memset(Cylinder_Data,NULL,sizeof(Cylinder_Data));//清空保持寄存器
         Timer7_Init();//定时器7初始化，用于监视空闲时间
         Modbus_RegMap();//Modbus寄存器映射
 }
@@ -280,6 +323,7 @@ void TIM7_IRQHandler(void)
 u16 startRegAddr;
 u16 RegNum;
 u16 calCRC;
+u8 i=0;
 void RS485_Service(void)
 {
         u16 recCRC;
@@ -318,7 +362,13 @@ void RS485_Service(void)
                                                         case 5://写单个输出开关量
                                                         {
                                                                 Modbus_05_Solve();
-                                                                break;
+																																for( i=0;i<15;i++)
+																																{
+																																	printf("%d",Connect_Data[i]);
+																																	
+																																}
+																																printf("\n");
+																																		break;
                                                         }
                                                                 
                                                         case 15://写多个输出开关量
@@ -487,6 +537,8 @@ void Modbus_05_Solve(void)
                 RS485_TX_BUFF[2]=0x02; //异常码
                 RS485_SendData(RS485_TX_BUFF,3);
         }
+				
+			
 }
 
 //Modbus功能码15处理程序

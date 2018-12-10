@@ -12,9 +12,11 @@
 ..\obj\rs485.o: ..\STM32F10x_FWLib\inc\stm32f10x_rcc.h
 ..\obj\rs485.o: ..\STM32F10x_FWLib\inc\stm32f10x_usart.h
 ..\obj\rs485.o: ..\STM32F10x_FWLib\inc\misc.h
+..\obj\rs485.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\rs485.o: ..\HARDWARE\MODBUS\CRC.h
 ..\obj\rs485.o: ..\STM32F10x_FWLib\inc\stm32f10x_tim.h
 ..\obj\rs485.o: ..\HARDWARE\TIMER\include.h
 ..\obj\rs485.o: ..\HARDWARE\ADC\adc.h
 ..\obj\rs485.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\rs485.o: ..\HARDWARE\STMFLASH\stmflash.h
+..\obj\rs485.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
