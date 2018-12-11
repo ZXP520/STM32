@@ -32,9 +32,9 @@ static void Stm32_Init(void)
  	LED_Init();			     				//LED端口初始化
 	KEY_Init();          				//初始化与按键连接的硬件接口
 	TIM_SetCompare1(TIM3,600);
+	printf("System inint sucess!\n");
 	
 }
- 
 int main(void)
  {		
 	Stm32_Init();
@@ -46,10 +46,12 @@ int main(void)
 			Flag_1ms=0;
 			Get_AdcData();	//adc取值1ms一次，5次得出平均值
 			RS485_Service();//modbus数据处理，1MS处理一次
+			Systime_cnt++;
 		}
 		if(Flag_5ms)  //5MS
 		{
 			Flag_5ms=0;
+			CylinderAllConnect(KEY_Scan(1));
 			
 		}
 		if(Flag_10ms)	//10MS

@@ -29,6 +29,7 @@ u8 RS485_TX_EN;
 */
 u32 Cylinder_Data[7]={0};//气缸与计数寄存器4x 0-6
 u32 Connect_Data[20]={0};//控制状态寄存器值
+u32 Status_Data[30]={0};//传感器状态寄存器
 
 
 
@@ -132,13 +133,48 @@ u16 CRC_Compute(u8 *puchMsgg,u8 usDataLen)// puchMsgg校验信息，字节数
 void Modbus_RegMap(void)
 {
         //输入开关量寄存器指针指向
+	    /*
         Modbus_InputIO[0]=(vu32*)&PEin(4);//KEY0
         Modbus_InputIO[1]=(vu32*)&PEin(3);//KEY1
         Modbus_InputIO[2]=(vu32*)&PEin(2);//KEY2
         Modbus_InputIO[3]=(vu32*)&PAin(0);//KEY3
+			*/
+	
+				memset(Status_Data,0,sizeof(Status_Data));//清除控制寄存器
+	
+				Modbus_InputIO[0]=(vu32*)&Status_Data[0];//
+				Modbus_InputIO[1]=(vu32*)&Status_Data[1];//
+				Modbus_InputIO[2]=(vu32*)&Status_Data[2];//
+				Modbus_InputIO[3]=(vu32*)&Status_Data[3];//
+				Modbus_InputIO[4]=(vu32*)&Status_Data[4];//
+				Modbus_InputIO[5]=(vu32*)&Status_Data[5];//
+				Modbus_InputIO[6]=(vu32*)&Status_Data[6];//
+				Modbus_InputIO[7]=(vu32*)&Status_Data[7];//
+				Modbus_InputIO[8]=(vu32*)&Status_Data[8];//
+				Modbus_InputIO[9]=(vu32*)&Status_Data[9];//
+				Modbus_InputIO[10]=(vu32*)&Status_Data[10];//
+				Modbus_InputIO[11]=(vu32*)&Status_Data[11];//
+				Modbus_InputIO[12]=(vu32*)&Status_Data[12];//
+				Modbus_InputIO[13]=(vu32*)&Status_Data[13];//
+				Modbus_InputIO[14]=(vu32*)&Status_Data[14];//
+				Modbus_InputIO[15]=(vu32*)&Status_Data[15];//
+				Modbus_InputIO[16]=(vu32*)&Status_Data[16];//
+				Modbus_InputIO[17]=(vu32*)&Status_Data[17];//
+				Modbus_InputIO[18]=(vu32*)&Status_Data[18];//
+				Modbus_InputIO[19]=(vu32*)&Status_Data[19];//
+				Modbus_InputIO[20]=(vu32*)&Status_Data[20];//
+				Modbus_InputIO[21]=(vu32*)&Status_Data[21];//
+				Modbus_InputIO[22]=(vu32*)&Status_Data[22];//
+				Modbus_InputIO[23]=(vu32*)&Status_Data[23];//
+				Modbus_InputIO[24]=(vu32*)&Status_Data[24];//
+				Modbus_InputIO[25]=(vu32*)&Status_Data[25];//
+				Modbus_InputIO[26]=(vu32*)&Status_Data[26];//
+				Modbus_InputIO[27]=(vu32*)&Status_Data[27];//
+				Modbus_InputIO[28]=(vu32*)&Status_Data[28];//
+				
         
 	
-				memset(Connect_Data,NULL,sizeof(Connect_Data));
+				memset(Connect_Data,NULL,sizeof(Connect_Data));//清除控制寄存器
         //输出开关量寄存器指针指向
         Modbus_OutputIO[0]=(vu32*)&Connect_Data[0];//启动暂停
 				Modbus_OutputIO[1]=(vu32*)&Connect_Data[1];//急停

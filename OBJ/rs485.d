@@ -19,4 +19,6 @@
 ..\obj\rs485.o: ..\HARDWARE\ADC\adc.h
 ..\obj\rs485.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\rs485.o: ..\HARDWARE\STMFLASH\stmflash.h
+..\obj\rs485.o: ..\HARDWARE\KEY\key.h
+..\obj\rs485.o: ..\HARDWARE\LED\led.h
 ..\obj\rs485.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h

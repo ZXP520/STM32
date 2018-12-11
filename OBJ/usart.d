@@ -19,3 +19,5 @@
 ..\obj\usart.o: ..\HARDWARE\ADC\adc.h
 ..\obj\usart.o: ..\HARDWARE\STMFLASH\stmflash.h
 ..\obj\usart.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\usart.o: ..\HARDWARE\KEY\key.h
+..\obj\usart.o: ..\HARDWARE\LED\led.h

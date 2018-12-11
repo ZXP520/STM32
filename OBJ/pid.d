@@ -19,3 +19,5 @@
 ..\obj\pid.o: ..\HARDWARE\ADC\adc.h
 ..\obj\pid.o: ..\HARDWARE\STMFLASH\stmflash.h
 ..\obj\pid.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\pid.o: ..\HARDWARE\KEY\key.h
+..\obj\pid.o: ..\HARDWARE\LED\led.h

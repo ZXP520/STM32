@@ -17,4 +17,6 @@
 ..\obj\runcontrol.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\runcontrol.o: ..\HARDWARE\STMFLASH\stmflash.h
 ..\obj\runcontrol.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\runcontrol.o: ..\HARDWARE\KEY\key.h
+..\obj\runcontrol.o: ..\HARDWARE\LED\led.h
 ..\obj\runcontrol.o: ..\HARDWARE\RUNCONTROL\runcontrol.h

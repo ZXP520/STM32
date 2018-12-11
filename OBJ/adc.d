@@ -19,4 +19,6 @@
 ..\obj\adc.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\adc.o: ..\HARDWARE\STMFLASH\stmflash.h
 ..\obj\adc.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\adc.o: ..\HARDWARE\KEY\key.h
+..\obj\adc.o: ..\HARDWARE\LED\led.h
 ..\obj\adc.o: ..\HARDWARE\MODBUS\RS485.h

@@ -1,4 +1,4 @@
-﻿#ifndef __LED_H
+#ifndef __LED_H
 #define __LED_H	 
 #include "sys.h"
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -15,6 +15,9 @@
 ////////////////////////////////////////////////////////////////////////////////// 
 #define LED0 PBout(5)// PB5
 #define LED1 PEout(5)// PE5	
+
+#define Cylinder01 PBout(12)//气缸01
+#define Cylinder02 PBout(13)//气缸02
 
 void LED_Init(void);//初始化
 

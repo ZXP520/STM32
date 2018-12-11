@@ -1,4 +1,4 @@
-﻿#ifndef __KEY_H
+#ifndef __KEY_H
 #define __KEY_H	 
 #include "sys.h"
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -20,10 +20,19 @@
 //#define KEY2 PEin(2)	//PE2
 //#define KEY3 PAin(0)	//PA0  WK_UP
  
-#define KEY0  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_4)//读取按键0
-#define KEY1  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_3)//读取按键1
-#define KEY2  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_2)//读取按键2 
-#define KEY3  GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)//读取按键3(WK_UP) 
+#define KEY0  GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)//读取按键0
+#define KEY1  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_4)//读取按键1
+#define KEY2  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_3)//读取按键2 
+#define KEY3  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_2)//读取按键3(WK_UP) 
+
+
+
+/*触发为低*/
+#define CylinderShrink01 		  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_7)//气缸收缩
+#define CylinderRelaxation01  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_8)//气缸舒张
+#define CylinderShrink02 		  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_9)//气缸收缩
+#define CylinderRelaxation02  GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_10)//气缸舒张
+#define Materials02						GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_11)//物料2
 
 
 #define KEY_UP 		4
