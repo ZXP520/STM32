@@ -51,14 +51,15 @@ int main(void)
 		if(Flag_5ms)  //5MS
 		{
 			Flag_5ms=0;
-			CylinderAllConnect(KEY_Scan(1));
-			
+			RunStatus();
 		}
 		if(Flag_10ms)	//10MS
 		{
 			Flag_10ms=0;
 			RunControl();
 			WorkRunControl();//运行
+			
+			CylinderAllConnect(KEY_Scan(1));
 		}
 		if(Flag_20ms)	//20MS
 		{

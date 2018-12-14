@@ -22,3 +22,4 @@
 ..\obj\rs485.o: ..\HARDWARE\KEY\key.h
 ..\obj\rs485.o: ..\HARDWARE\LED\led.h
 ..\obj\rs485.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\rs485.o: ..\HARDWARE\RUNCONTROL\runcontrol.h

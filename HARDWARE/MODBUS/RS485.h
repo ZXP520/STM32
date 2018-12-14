@@ -3,8 +3,6 @@
 #include "sys.h"
 #include <stdbool.h>
 
-
-
 void Timer7_Init(void);
 void RS485_Init(void);
 void RS485_Service(void);

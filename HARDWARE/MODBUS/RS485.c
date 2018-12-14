@@ -3,7 +3,7 @@
 #include "stm32f10x_tim.h"
 #include "include.h"
 #include <string.h>
-
+#include "runcontrol.h"
 ///////////////////////////////////////////////////////////
 u32 RS485_Baudrate=115200;//9600;//通讯波特率
 u8 RS485_Parity=0;//0无校验；1奇校验；2偶校验
@@ -130,78 +130,105 @@ u16 CRC_Compute(u8 *puchMsgg,u8 usDataLen)// puchMsgg校验信息，字节数
 }
 
 
+//CylStatus CYL;
+
 void Modbus_RegMap(void)
 {
-        //输入开关量寄存器指针指向
+      //输入开关量寄存器指针指向-----------------------------------------
 	    /*
         Modbus_InputIO[0]=(vu32*)&PEin(4);//KEY0
         Modbus_InputIO[1]=(vu32*)&PEin(3);//KEY1
         Modbus_InputIO[2]=(vu32*)&PEin(2);//KEY2
         Modbus_InputIO[3]=(vu32*)&PAin(0);//KEY3
 			*/
-	
 				memset(Status_Data,0,sizeof(Status_Data));//清除控制寄存器
+				
+				//气缸电磁开关
+				Modbus_InputIO[CylSh01]=(vu32*)&Status_Data[0];
+				Modbus_InputIO[CylRe01]=(vu32*)&Status_Data[1];
 	
-				Modbus_InputIO[0]=(vu32*)&Status_Data[0];//
-				Modbus_InputIO[1]=(vu32*)&Status_Data[1];//
-				Modbus_InputIO[2]=(vu32*)&Status_Data[2];//
-				Modbus_InputIO[3]=(vu32*)&Status_Data[3];//
-				Modbus_InputIO[4]=(vu32*)&Status_Data[4];//
-				Modbus_InputIO[5]=(vu32*)&Status_Data[5];//
-				Modbus_InputIO[6]=(vu32*)&Status_Data[6];//
-				Modbus_InputIO[7]=(vu32*)&Status_Data[7];//
-				Modbus_InputIO[8]=(vu32*)&Status_Data[8];//
-				Modbus_InputIO[9]=(vu32*)&Status_Data[9];//
-				Modbus_InputIO[10]=(vu32*)&Status_Data[10];//
-				Modbus_InputIO[11]=(vu32*)&Status_Data[11];//
-				Modbus_InputIO[12]=(vu32*)&Status_Data[12];//
-				Modbus_InputIO[13]=(vu32*)&Status_Data[13];//
-				Modbus_InputIO[14]=(vu32*)&Status_Data[14];//
-				Modbus_InputIO[15]=(vu32*)&Status_Data[15];//
-				Modbus_InputIO[16]=(vu32*)&Status_Data[16];//
-				Modbus_InputIO[17]=(vu32*)&Status_Data[17];//
-				Modbus_InputIO[18]=(vu32*)&Status_Data[18];//
-				Modbus_InputIO[19]=(vu32*)&Status_Data[19];//
-				Modbus_InputIO[20]=(vu32*)&Status_Data[20];//
-				Modbus_InputIO[21]=(vu32*)&Status_Data[21];//
-				Modbus_InputIO[22]=(vu32*)&Status_Data[22];//
-				Modbus_InputIO[23]=(vu32*)&Status_Data[23];//
-				Modbus_InputIO[24]=(vu32*)&Status_Data[24];//
-				Modbus_InputIO[25]=(vu32*)&Status_Data[25];//
-				Modbus_InputIO[26]=(vu32*)&Status_Data[26];//
-				Modbus_InputIO[27]=(vu32*)&Status_Data[27];//
-				Modbus_InputIO[28]=(vu32*)&Status_Data[28];//
+				Modbus_InputIO[CylSh02]=(vu32*)&Status_Data[2];
+				Modbus_InputIO[CylRe02]=(vu32*)&Status_Data[3];
+	
+				Modbus_InputIO[CylSh03]=(vu32*)&Status_Data[4];
+				Modbus_InputIO[CylRe03]=(vu32*)&Status_Data[5];
+	
+				Modbus_InputIO[CylSh04]=(vu32*)&Status_Data[6];
+				Modbus_InputIO[CylRe04]=(vu32*)&Status_Data[7];
+				
+				Modbus_InputIO[CylSh05]=(vu32*)&Status_Data[8];
+				Modbus_InputIO[CylRe05]=(vu32*)&Status_Data[9];
+				
+				Modbus_InputIO[CylSh06]=(vu32*)&Status_Data[10];
+				Modbus_InputIO[CylRe06]=(vu32*)&Status_Data[11];
+				
+				Modbus_InputIO[CylSh07]=(vu32*)&Status_Data[12];
+				Modbus_InputIO[CylRe07]=(vu32*)&Status_Data[13];
+				
+				Modbus_InputIO[CylSh08]=(vu32*)&Status_Data[14];
+				Modbus_InputIO[CylRe08]=(vu32*)&Status_Data[15];
+				
+				
+				//光电
+				Modbus_InputIO[Light01]=(vu32*)&Status_Data[16];
+				Modbus_InputIO[Light02]=(vu32*)&Status_Data[17];
+				Modbus_InputIO[Light03]=(vu32*)&Status_Data[18];
+				Modbus_InputIO[Light04]=(vu32*)&Status_Data[19];
+					
+				
+				
+				//气缸运行状态
+				Modbus_InputIO[CylOp01]=(vu32*)&Status_Data[20];
+				Modbus_InputIO[CylOp02]=(vu32*)&Status_Data[21];
+				Modbus_InputIO[CylOp03]=(vu32*)&Status_Data[22];
+				
+				//料槽状态
+				Modbus_InputIO[ChuSt01]=(vu32*)&Status_Data[23];
+				Modbus_InputIO[ChuSt02]=(vu32*)&Status_Data[24];
+				Modbus_InputIO[ChuSt03]=(vu32*)&Status_Data[25];
+				
+				//整机运行状态
+				Modbus_InputIO[AllSt01]=(vu32*)&Status_Data[26];
+				
+				//转盘信号
+				Modbus_InputIO[TurTa01]=(vu32*)&Status_Data[27];
+				
 				
         
 	
+			
+        //输出开关量寄存器指针指向---------------------------------------------
 				memset(Connect_Data,NULL,sizeof(Connect_Data));//清除控制寄存器
-        //输出开关量寄存器指针指向
-        Modbus_OutputIO[0]=(vu32*)&Connect_Data[0];//启动暂停
-				Modbus_OutputIO[1]=(vu32*)&Connect_Data[1];//急停
-				Modbus_OutputIO[2]=(vu32*)&Connect_Data[2];//计数清零
-				Modbus_OutputIO[3]=(vu32*)&Connect_Data[3];//整机复位
-				Modbus_OutputIO[4]=(vu32*)&Connect_Data[4];//瓶身上料
-				Modbus_OutputIO[5]=(vu32*)&Connect_Data[5];//內构上料
-				Modbus_OutputIO[6]=(vu32*)&Connect_Data[6];//瓶盖上料
-				Modbus_OutputIO[7]=(vu32*)&Connect_Data[7];//旋转气缸控制-內构
-				Modbus_OutputIO[8]=(vu32*)&Connect_Data[8];//旋转气缸控制-瓶盖
-				Modbus_OutputIO[9]=(vu32*)&Connect_Data[9];//拧瓶控制
-				Modbus_OutputIO[10]=(vu32*)&Connect_Data[10];//推料气缸控制-內构
-				Modbus_OutputIO[11]=(vu32*)&Connect_Data[11];//推料气缸控制-瓶盖
-				Modbus_OutputIO[12]=(vu32*)&Connect_Data[12];//转盘控制
-				Modbus_OutputIO[13]=(vu32*)&Connect_Data[13];//压料气缸控制-內构
-			  Modbus_OutputIO[14]=(vu32*)&Connect_Data[14];//压料气缸控制-瓶盖
+				
+        Modbus_OutputIO[0]=(vu32*)&Connect_Data[StopStart]; 	//启动停机
+				Modbus_OutputIO[1]=(vu32*)&Connect_Data[TimeOut]; 		//暂停
+				Modbus_OutputIO[2]=(vu32*)&Connect_Data[CountClear]; 	//计数清零
+				Modbus_OutputIO[3]=(vu32*)&Connect_Data[ReSet]; 			//整机复位
+				Modbus_OutputIO[4]=(vu32*)&Connect_Data[BottleM];	 	  //瓶身上料
+				Modbus_OutputIO[5]=(vu32*)&Connect_Data[InternalM];	  //內构上料
+				Modbus_OutputIO[6]=(vu32*)&Connect_Data[CapM];	  		//瓶盖上料
+				
+				Modbus_OutputIO[7]=(vu32*)&Connect_Data[7];	  //旋转气缸控制-內构
+				Modbus_OutputIO[8]=(vu32*)&Connect_Data[8];	  //旋转气缸控制-瓶盖
+				Modbus_OutputIO[9]=(vu32*)&Connect_Data[9];	  //拧瓶控制
+				Modbus_OutputIO[10]=(vu32*)&Connect_Data[10]; //推料气缸控制-內构
+				Modbus_OutputIO[11]=(vu32*)&Connect_Data[11]; //推料气缸控制-瓶盖
+				Modbus_OutputIO[12]=(vu32*)&Connect_Data[12]; //转盘控制
+				Modbus_OutputIO[13]=(vu32*)&Connect_Data[13]; //压料气缸控制-內构
+			  Modbus_OutputIO[14]=(vu32*)&Connect_Data[14]; //压料气缸控制-瓶盖
 				
 	
         
 				
+				
+        //保持寄存器指针指向-------------------------------------------------------------------
 				Cylinder_Data[1]=0;
 				Cylinder_Data[2]=1;
 				Cylinder_Data[3]=2;
 				Cylinder_Data[4]=0;
 				Cylinder_Data[5]=1;
 				Cylinder_Data[6]=2;
-        //保持寄存器指针指向
+				
         Modbus_HoldReg[0]=(u16*)&Cylinder_Data[0];//产量计数 
         Modbus_HoldReg[1]=(u16*)&Cylinder_Data[1];//旋转气缸位置-內构   0-初  1-末  2-中
         Modbus_HoldReg[2]=(u16*)&Cylinder_Data[2];//推料气缸位置
