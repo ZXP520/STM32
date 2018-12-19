@@ -3,12 +3,15 @@
 #include "sys.h"
 #include <stdbool.h>
 
+
 void Timer7_Init(void);
 void RS485_Init(void);
 void RS485_Service(void);
 extern u32 Cylinder_Data[7];
 extern u32 Connect_Data[20];
-extern u32 Status_Data[30];
+extern u32 Status_Data[8];
+
+extern vu32 *Modbus_InputIO[100];
 #endif
 
 

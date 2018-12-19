@@ -21,3 +21,4 @@
 ..\obj\runcontrol.o: ..\HARDWARE\LED\led.h
 ..\obj\runcontrol.o: ..\HARDWARE\RUNCONTROL\runcontrol.h
 ..\obj\runcontrol.o: ..\HARDWARE\MODBUS\RS485.h
+..\obj\runcontrol.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h

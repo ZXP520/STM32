@@ -27,11 +27,12 @@ static void Stm32_Init(void)
 	RS485_Init();								//MODBUS初始化
 	uart_init(115200);				  //串口初始化为115200
 	STMFLASH_Write(FLASH_SAVE_ADDR,savedata,2);//写Flash数据
-	Adc_Init();									//ADC初始化
-	PID_Init();									//PID参数初始化
+	//Adc_Init();									//ADC初始化
+	//PID_Init();									//PID参数初始化
  	LED_Init();			     				//LED端口初始化
 	KEY_Init();          				//初始化与按键连接的硬件接口
 	TIM_SetCompare1(TIM3,600);
+	InitSequeuet(); 					  //队列初始化
 	printf("System inint sucess!\n");
 	
 }
@@ -51,15 +52,14 @@ int main(void)
 		if(Flag_5ms)  //5MS
 		{
 			Flag_5ms=0;
-			RunStatus();
 		}
 		if(Flag_10ms)	//10MS
 		{
 			Flag_10ms=0;
-			RunControl();
-			WorkRunControl();//运行
+//			RunControl();
+//			WorkRunControl();//运行
 			
-			CylinderAllConnect(KEY_Scan(1));
+			CylinderAllConnect(Key_Scan());
 		}
 		if(Flag_20ms)	//20MS
 		{
@@ -69,12 +69,13 @@ int main(void)
 		if(Flag_100ms)	//100MS
 		{
 			Flag_100ms=0;
-			
+			RunStatus();
 		}
 		if(Flag_500ms)	//500MS
 		{
 			Flag_500ms=0;
-			Cylinder_Data[0]=Mach.adc*3.3/4096*1000;//AD采样数据更新到屏幕
+			//Cylinder_Data[0]=Mach.adc*3.3/4096*1000;//AD采样数据更新到屏幕
+			Cylinder_Data[0]+=1;
 		}
 		if(Flag_1000ms)  //1S
 		{

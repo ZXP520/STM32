@@ -13,11 +13,16 @@
 //Copyright(C) 广州市星翼电子科技有限公司 2009-2019
 //All rights reserved									  
 ////////////////////////////////////////////////////////////////////////////////// 
-#define LED0 PBout(5)// PB5
-#define LED1 PEout(5)// PE5	
 
-#define Cylinder01 PBout(12)//气缸01
-#define Cylinder02 PBout(13)//气缸02
+
+#define Cylinder01 PEout(13)//气缸01
+#define Cylinder02 PEout(11)//气缸02
+#define Cylinder03 PEout(9) //气缸03
+#define Cylinder04 PEout(7) //气缸04
+#define Cylinder05 PBout(1) //气缸05
+#define Cylinder06 PCout(5) //气缸06
+#define Screw_Cap01  PAout(7) //拧瓶盖
+#define Turntable01  PAout(5) //转盘
 
 void LED_Init(void);//初始化
 

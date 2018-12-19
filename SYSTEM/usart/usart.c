@@ -109,7 +109,7 @@ void uart_init(u32 bound)
 void USART1_IRQHandler(void)                	//串口1中断服务程序
 {
 	u8 Res;
-	static u8 Rx_cnt=0;
+//	static u8 Rx_cnt=0;
 #ifdef OS_TICKS_PER_SEC	 	//如果时钟节拍数定义了,说明要使用ucosII了.
 	OSIntEnter();    
 #endif
