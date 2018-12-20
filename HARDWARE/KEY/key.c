@@ -42,7 +42,7 @@ void KEY_Init(void) //IO初始化
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 
  	GPIO_Init(GPIOD, &GPIO_InitStructure);
 	
-	// PD 1
+	// PE 1
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;//PE1~1
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; //设置成浮空输入
  	GPIO_Init(GPIOE, &GPIO_InitStructure);//初始化GPIOE1

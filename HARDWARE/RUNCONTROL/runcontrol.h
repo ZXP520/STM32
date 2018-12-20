@@ -16,9 +16,11 @@ typedef struct
 void InitSequeuet(void);
 void RunControl(void);
 void WorkRunControl(void);
-void CylinderAllConnect(u8 key);//不支持连按
+//u8 CylinderAllConnect(u8 key);//不支持连按
 void RunStatus(void);
-u8 Key_Scan(void);							//键值扫描
+//u8 Key_Scan(void);							//键值扫描
+
+void ALLControl_10ms(void);
 extern u32 Systime_cnt;
 #endif
 

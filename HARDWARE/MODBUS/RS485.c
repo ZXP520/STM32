@@ -157,21 +157,27 @@ void Modbus_RegMap(void)
 				Modbus_InputIO[CylRe04]=(vu32*)&PDin(1);
 				
 				Modbus_InputIO[CylSh05]=(vu32*)&PCin(12);
-				Modbus_InputIO[CylRe05]=(vu32*)&PCin(10);
+				Modbus_InputIO[CylRe05]=(vu32*)&PCin(10);	
 				
-				Modbus_InputIO[CylSh06]=(vu32*)&PAin(14);
+				Modbus_InputIO[CylSh06]=(vu32*)&PAin(14);			
 				Modbus_InputIO[CylRe06]=(vu32*)&PAin(12);
 				
-				Modbus_InputIO[CylSh07]=(vu32*)&PAin(8);
-				Modbus_InputIO[CylRe07]=(vu32*)&PCin(8);
 				
-				Modbus_InputIO[CylSh08]=(vu32*)&PCin(6);
-				Modbus_InputIO[CylRe08]=(vu32*)&PDin(14);
+				Modbus_InputIO[CylSh07]=(vu32*)&PAin(8);
+				
 				
 				
 				//光电
+				Modbus_InputIO[CylRe07]=(vu32*)&PCin(8);
+				
+				
+				
+				Modbus_InputIO[CylSh08]=(vu32*)&PCin(6);
+				Modbus_InputIO[CylRe08]=(vu32*)&PDin(14);
+					
 				Modbus_InputIO[Light01]=(vu32*)&PDin(12);
 				Modbus_InputIO[Light02]=(vu32*)&PDin(10);
+				//光电
 				Modbus_InputIO[Light03]=(vu32*)&PDin(8);
 				Modbus_InputIO[Light04]=(vu32*)&PBin(14);
 					

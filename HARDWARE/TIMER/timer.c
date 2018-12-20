@@ -1,4 +1,4 @@
-﻿#include "timer.h"
+#include "timer.h"
 #include "led.h"
 #include "stm32f10x_tim.h"
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -53,6 +53,7 @@ void TIM4_IRQHandler(void)   //TIM3中断
 	static u16 Time_cnt=0;
 	if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)  //检查TIM3更新中断发生与否
 	{
+		TIM_ClearITPendingBit(TIM4, TIM_IT_Update );  //清除TIMx更新中断标志 
 		Time_cnt++;
 		Flag_1ms=1;
 		if(Time_cnt%10==0)
@@ -80,8 +81,7 @@ void TIM4_IRQHandler(void)   //TIM3中断
 			Flag_1000ms=1;
 			Time_cnt=0;
 		}
-		
-		TIM_ClearITPendingBit(TIM4, TIM_IT_Update );  //清除TIMx更新中断标志 
+
 	}
 }
 
