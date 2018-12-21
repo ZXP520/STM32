@@ -47,7 +47,7 @@ void TIM4_Int_Init(u16 arr,u16 psc)
 }
 
 u8 Flag_1ms=0,Flag_5ms=0,Flag_10ms=0,Flag_20ms=0,Flag_100ms=0,Flag_500ms=0,Flag_1000ms=0;
-//定时器3中断服务程序
+//定时器4中断服务程序
 void TIM4_IRQHandler(void)   //TIM3中断
 {
 	static u16 Time_cnt=0;

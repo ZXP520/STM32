@@ -66,7 +66,7 @@ int main(void)
 		if(Flag_500ms)	//500MS
 		{
 			Flag_500ms=0;
-			Cylinder_Data[0]+=1;
+			//Cylinder_Data[0]+=1;
 		}
 		if(Flag_1000ms)  //1S
 		{

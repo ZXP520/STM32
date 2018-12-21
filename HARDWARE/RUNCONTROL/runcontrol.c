@@ -505,7 +505,9 @@ static u8 CylinderConnect06(void)
 ///瓶盖下压控制
 static u8 CapCylinderControl(void)
 {
-	static u8 ErrorTime_cnt=0;
+	static u8 ErrorTime_cnt=0,Error=0;
+	static u32 systime=0;
+	
 	switch(CapCylinderStep)
 	{
 		case 0: break;
@@ -515,141 +517,198 @@ static u8 CapCylinderControl(void)
 			{
 				Cylinder05=1;
 				CapCylinderStep=2;
+				ErrorTime_cnt=0;
+				systime=Systime_cnt;//取时间
 			}
 			else
 			{
-				//CapCylinderStep=0;
+				Error=5;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 2://压到底夹紧
 		{
-			if(*Modbus_InputIO[CylRe05]==0)
+			if(*Modbus_InputIO[CylRe05]==0&&*Modbus_InputIO[CylSh05])
 			{
 				if(*Modbus_InputIO[CylSh06]==0&&(*Modbus_InputIO[CylRe06]))  			//气缸收缩且没舒张
 				{
 					Cylinder06=1;
 					CapCylinderStep=3;
+					ErrorTime_cnt=0;
+					//Cylinder_Data[0]=Systime_cnt-systime;//线用次数来显示时间
 				}
 				else
 				{
-					//CapCylinderStep=0;
+					Error=6;
+					ErrorTime_cnt++;
 				}
+			}
+			else
+			{
+				Error=5;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 3://夹紧了上升
 		{
-			if(*Modbus_InputIO[CylRe06]==0)
+			if(*Modbus_InputIO[CylRe06]==0&&*Modbus_InputIO[CylSh06])
 			{
 				if(*Modbus_InputIO[CylSh05]&&(*Modbus_InputIO[CylRe05]==0))  //气缸舒张且没收缩
 				{
 					Cylinder05=0;
 					CapCylinderStep=4;
+					ErrorTime_cnt=0;
 				}
 				else
 				{
-					//CapCylinderStep=0;
+					Error=5;
+					ErrorTime_cnt++;
 				}
+			}
+			else
+			{
+				Error=6;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 4://上到顶旋转
 		{
-			if(*Modbus_InputIO[CylSh05]==0)
+			if(*Modbus_InputIO[CylSh05]==0&&*Modbus_InputIO[CylRe05])
 			{
 				if(*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04]))  			//气缸收缩且没舒张
 				{
 					Cylinder04=1;
 					CapCylinderStep=5;
+					ErrorTime_cnt=0;
 				}
 				else
 				{
-					//CapCylinderStep=0;
+					Error=4;
+					ErrorTime_cnt++;
 				}
+			}
+			else
+			{
+				Error=5;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 5://旋转完了下降
 		{
-			if(*Modbus_InputIO[CylRe04]==0)
+			if(*Modbus_InputIO[CylRe04]==0&&*Modbus_InputIO[CylSh04])
 			{
 				if(*Modbus_InputIO[CylSh05]==0&&(*Modbus_InputIO[CylRe05]))  			//气缸收缩且没舒张
 				{
 					Cylinder05=1;
 					CapCylinderStep=6;
+					ErrorTime_cnt=0;
 				}
-				else 
+				else
 				{
-					//CapCylinderStep=0;
+					Error=5;
+					ErrorTime_cnt++;
 				}
+			}
+			else
+			{
+				Error=4;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 6://下到底松开
 		{
-			if(*Modbus_InputIO[CylRe05]==0)
+			if(*Modbus_InputIO[CylRe05]==0&&*Modbus_InputIO[CylSh05])
 			{
 				if(*Modbus_InputIO[CylSh06]&&(*Modbus_InputIO[CylRe06]==0))  //气缸舒张且没收缩
 				{
 					Cylinder06=0;
 					CapCylinderStep=7;
+					ErrorTime_cnt=0;
 				}
 				else
 				{
-					//CapCylinderStep=0;
+					Error=6;
+					ErrorTime_cnt++;
 				}
+			}
+			else
+			{
+				Error=5;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 7://松开完了上升
 		{
-			if(*Modbus_InputIO[CylSh06])
+			if(*Modbus_InputIO[CylSh06]==0&&*Modbus_InputIO[CylRe06])
 			{
 				if(*Modbus_InputIO[CylSh05]&&(*Modbus_InputIO[CylRe05]==0))  //气缸舒张且没收缩
 				{
 					Cylinder05=0;
 					CapCylinderStep=8;
+					ErrorTime_cnt=0;
 				}
 				else
 				{
-					//CapCylinderStep=0;
+					Error=5;
+					ErrorTime_cnt++;
 				}
+			}
+			else
+			{
+				Error=6;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 8://上升完了旋转
 		{
-			if(*Modbus_InputIO[CylSh05]==0)
+			if(*Modbus_InputIO[CylSh05]==0&&*Modbus_InputIO[CylRe05])
 			{
 				if(*Modbus_InputIO[CylSh04]&&(*Modbus_InputIO[CylRe04]==0))  //气缸舒张且没收缩
 				{
 					Cylinder04=0;
-					CapCylinderStep=0;
+					CapCylinderStep=9;
+					ErrorTime_cnt=0;
 				}
 				else
 				{
-					//CapCylinderStep=0;
+					Error=4;
+					ErrorTime_cnt++;
 				}
+			}
+			else
+			{
+				Error=5;
+				ErrorTime_cnt++;
 			}
 			break;
 		}
-		case 9:
+		case 9://旋转完了
 		{
+			if(*Modbus_InputIO[CylSh04]==0&&*Modbus_InputIO[CylRe04])
+			{
+				CapCylinderStep=0;
+				ErrorTime_cnt=0;
+				Cylinder_Data[0]=Systime_cnt-systime;//线用次数来显示时间
+			}
+			else
+			{
+				Error=4;
+				ErrorTime_cnt++;
+			}
 			break;
 		}
-		case 10:
-		{
-			break;
-		}
-		case 11:
-		{
-			break;
-		}
-		case 12:
-		{
-			break;
-		}
+		default:break;
+	}
+	if(ErrorTime_cnt>100)//out 1s
+	{
+		return Error;//返回错误气缸号
 	}
 	return 0;
 }
