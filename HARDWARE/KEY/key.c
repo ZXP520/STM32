@@ -24,27 +24,27 @@ void KEY_Init(void) //IO初始化
 	
 	// PA 3
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_8|GPIO_Pin_12|GPIO_Pin_14;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
  	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	
 	// PB 5
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4|GPIO_Pin_6|GPIO_Pin_9|GPIO_Pin_12|GPIO_Pin_14;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
  	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
 	// PC 4
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6|GPIO_Pin_8|GPIO_Pin_10|GPIO_Pin_12;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
  	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	
 	// PD 8
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1|GPIO_Pin_3|GPIO_Pin_5|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_10|GPIO_Pin_12|GPIO_Pin_14;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
  	GPIO_Init(GPIOD, &GPIO_InitStructure);
 	
 	// PE 1
 	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;//PE1~1
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; //设置成浮空输入
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //设置成浮空输入
  	GPIO_Init(GPIOE, &GPIO_InitStructure);//初始化GPIOE1
 	
 	

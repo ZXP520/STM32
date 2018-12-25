@@ -162,24 +162,11 @@ void Modbus_RegMap(void)
 				Modbus_InputIO[CylSh06]=(vu32*)&PAin(14);			
 				Modbus_InputIO[CylRe06]=(vu32*)&PAin(12);
 				
-				
-				Modbus_InputIO[CylSh07]=(vu32*)&PAin(8);
-				
-				
-				
 				//光电
-				Modbus_InputIO[CylRe07]=(vu32*)&PCin(8);
-				
-				
-				
-				Modbus_InputIO[CylSh08]=(vu32*)&PCin(6);
-				Modbus_InputIO[CylRe08]=(vu32*)&PDin(14);
-					
-				Modbus_InputIO[Light01]=(vu32*)&PDin(12);
-				Modbus_InputIO[Light02]=(vu32*)&PDin(10);
-				//光电
-				Modbus_InputIO[Light03]=(vu32*)&PDin(8);
-				Modbus_InputIO[Light04]=(vu32*)&PBin(14);
+				Modbus_InputIO[Light01]=(vu32*)&PAin(8);
+				Modbus_InputIO[Light02]=(vu32*)&PCin(8);			
+				Modbus_InputIO[Light03]=(vu32*)&PCin(6);
+				Modbus_InputIO[Light04]=(vu32*)&PDin(14);
 					
 				
 				
@@ -197,7 +184,7 @@ void Modbus_RegMap(void)
 				Modbus_InputIO[AllSt01]=(vu32*)&Status_Data[6];
 				
 				//转盘信号
-				Modbus_InputIO[TurTa01]=(vu32*)&PBin(12);
+				Modbus_InputIO[TurTa01]=(vu32*)&PDin(12);
 				
 				
         
@@ -213,15 +200,12 @@ void Modbus_RegMap(void)
 				Modbus_OutputIO[4]=(vu32*)&Connect_Data[BottleM];	   	 //瓶身上料
 				Modbus_OutputIO[5]=(vu32*)&Connect_Data[InternalM];	     //內构上料
 				Modbus_OutputIO[6]=(vu32*)&Connect_Data[CapM];	  		 //瓶盖上料
-				
-				Modbus_OutputIO[7] = (vu32*)&Connect_Data[InternaR_C];   //旋转气缸控制-內构
-				Modbus_OutputIO[8] = (vu32*)&Connect_Data[CapR_C];	     //旋转气缸控制-瓶盖
-				Modbus_OutputIO[9] = (vu32*)&Connect_Data[ScrewCap];	   //拧瓶控制
-				Modbus_OutputIO[10]= (vu32*)&Connect_Data[InternaPush_C];//推料气缸控制-內构
-				Modbus_OutputIO[11]= (vu32*)&Connect_Data[ScrewPush_C];  //推料气缸控制-瓶盖
-				Modbus_OutputIO[12]= (vu32*)&Connect_Data[Turntable];    //转盘控制
-				Modbus_OutputIO[13]= (vu32*)&Connect_Data[InternalPM_C]; //压料气缸控制-內构
-				Modbus_OutputIO[14]= (vu32*)&Connect_Data[CapPM_C];      //压料气缸控制-瓶盖
+				Modbus_OutputIO[7] = (vu32*)&Connect_Data[ScrewCap];	   //拧瓶控制
+				Modbus_OutputIO[8]= (vu32*)&Connect_Data[InternaPush_C];//推料气缸控制-內构
+				Modbus_OutputIO[9]= (vu32*)&Connect_Data[ScrewPush_C];  //推料气缸控制-瓶盖
+				Modbus_OutputIO[10]= (vu32*)&Connect_Data[Turntable];    //转盘控制
+				Modbus_OutputIO[11]= (vu32*)&Connect_Data[InternalPM_C]; //压料气缸控制-內构
+				Modbus_OutputIO[12]= (vu32*)&Connect_Data[CapPM_C];      //压料气缸控制-瓶盖
 				
 	
         
@@ -236,13 +220,11 @@ void Modbus_RegMap(void)
 				Cylinder_Data[6]=2;
 				
 				Modbus_HoldReg[0]=(u16*)&Cylinder_Data[0];//产量计数 
-				Modbus_HoldReg[1]=(u16*)&Cylinder_Data[1];//旋转气缸位置-內构   0-初  1-末  2-中
-				Modbus_HoldReg[2]=(u16*)&Cylinder_Data[2];//推料气缸位置
-				Modbus_HoldReg[3]=(u16*)&Cylinder_Data[3];//压料气缸位置 
+				Modbus_HoldReg[1]=(u16*)&Cylinder_Data[1];//推料气缸位置-內构   0-初  1-末  2-中
+				Modbus_HoldReg[2]=(u16*)&Cylinder_Data[2];//压料气缸位置 
+				Modbus_HoldReg[3]=(u16*)&Cylinder_Data[3];//推料气缸位置 -瓶盖	0-初  1-末  2-中
 						
-				Modbus_HoldReg[4]=(u16*)&Cylinder_Data[4];//旋转气缸位置-瓶盖	0-初  1-末  2-中
-				Modbus_HoldReg[5]=(u16*)&Cylinder_Data[5];//推料气缸位置 
-				Modbus_HoldReg[6]=(u16*)&Cylinder_Data[6];//压料气缸位置 
+				Modbus_HoldReg[4]=(u16*)&Cylinder_Data[4];//压料气缸位置 
         
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,12 +413,12 @@ void RS485_Service(void)
                                                         case 5://写单个输出开关量
                                                         {
                                                                 Modbus_05_Solve();
-																																for( i=0;i<15;i++)
-																																{
-																																	printf("%d",Connect_Data[i]);
-																																	
-																																}
-																																printf("\n");
+//																																for( i=0;i<15;i++)
+//																																{
+//																																	printf("%d",Connect_Data[i]);
+//																																	
+//																																}
+//																																printf("\n");
 																																		break;
                                                         }
                                                                 

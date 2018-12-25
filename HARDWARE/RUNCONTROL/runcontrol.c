@@ -155,15 +155,15 @@ void RunStatus(void)
 	//气缸状态
 	if((*Modbus_InputIO[CylSh01]==0)&&(*Modbus_InputIO[CylRe01]))  		//气缸收缩且没舒张
 	{
-		Cylinder_Data[3]=0;
+		Cylinder_Data[1]=0;
 	}
 	else if(*Modbus_InputIO[CylSh01]&&(*Modbus_InputIO[CylRe01]==0))  //气缸舒张且没收缩
 	{
-		Cylinder_Data[3]=1;
+		Cylinder_Data[1]=1;
 	}
 	else
 	{
-		Cylinder_Data[3]=2;
+		Cylinder_Data[1]=2;
 	}
 	
 	if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸收缩且没舒张为正常状态
@@ -177,6 +177,32 @@ void RunStatus(void)
 	else
 	{
 		Cylinder_Data[2]=2;
+	}
+	
+	if((*Modbus_InputIO[CylSh03]==0)&&(*Modbus_InputIO[CylRe03]))  		//气缸收缩且没舒张
+	{
+		Cylinder_Data[3]=0;
+	}
+	else if(*Modbus_InputIO[CylSh03]&&(*Modbus_InputIO[CylRe03]==0))  //气缸舒张且没收缩
+	{
+		Cylinder_Data[3]=1;
+	}
+	else
+	{
+		Cylinder_Data[3]=2;
+	}
+	
+	if(*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04])) 		  //气缸收缩且没舒张为正常状态
+	{
+		Cylinder_Data[4]=0;
+	}
+	else if(*Modbus_InputIO[CylSh04]&&(*Modbus_InputIO[CylRe04]==0))  //气缸舒张且没收缩
+	{
+		Cylinder_Data[4]=1;
+	}
+	else
+	{
+		Cylinder_Data[4]=2;
 	}
 	
 	
@@ -289,11 +315,11 @@ static u8 CylinderConnect02(void)
 {
 	if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸收缩且没舒张为正常状态
 	{
-		Cylinder02=1;
+		Cylinder02=0;
 	}
 	else if(*Modbus_InputIO[CylSh02]&&(*Modbus_InputIO[CylRe02]==0))  //气缸舒张且没收缩
 	{
-		Cylinder02=0;
+		Cylinder02=1;
 	}
 	else
 	{
@@ -308,14 +334,37 @@ u32 Systime_cnt=0;
 u8 AllTime_Cnt=0;
 static u8 CylinderStepControl(void)
 {
-	static u8  cishujishu=0,ErrorTime_cnt=0,Light_cnt=0;
+	static u8  ErrorTime_cnt=0,Light_cnt=0,Error=0,flag=0,cishucnt=0;
 	static u32 systime=0;
 
 	switch(CylinderStep)
 	{
 		case 0: break;
-		case 1:
+		case 1://气缸2收缩
 		{
+			if(*Modbus_InputIO[CylRe02]==0&&(*Modbus_InputIO[CylSh02])) 		  //气缸2舒张且没收缩为正常状态
+			{
+				systime=Systime_cnt;//取时间
+				Cylinder02=1;//气缸2收缩
+				ErrorTime_cnt=0;
+				CylinderStep=2;
+				flag=1;
+			}
+			else
+			{
+				Error=2;
+				ErrorTime_cnt++;//动作超时计数
+			}
+			break;
+		}
+	  case 2://光电检测有料则气缸2推料
+		{
+			
+			if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])&&flag) 		  //气缸1收缩且没舒张为正常状态
+			{
+				flag=0;
+			}
+			
 			if(*Modbus_InputIO[Light03]==0)//光电3滤波
 			{
 				Light_cnt++;
@@ -324,126 +373,85 @@ static u8 CylinderStepControl(void)
 			{
 				Light_cnt=0;
 			}
-			
-			if(Light_cnt>10)//光电传感器100ms内
-			{			
-				if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸2收缩且没舒张为正常状态
+			//if(Light_cnt>3)//光电传感器100ms内
+			if(*Modbus_InputIO[Light03]==0)//光电3滤波
+			{	
+				if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸1收缩且没舒张为正常状态
 				{
-					systime=Systime_cnt;//取时间
-					Cylinder02=1;//气缸2舒张
-					AllTime_Cnt=10;//下一步延时10*10ms
-					ErrorTime_cnt=0;
-					CylinderStep=2;
-				}
-				else
-				{
-					ErrorTime_cnt++;//动作超时计数
-				}
-				
-				if(ErrorTime_cnt>100)//动作10*100ms则报故障
-				{
-					ErrorTime_cnt=0;
-					CylinderStep=0;
-					return 2;//气缸2故障
-				}
-			}
-			break;
-		}
-		case 2:
-		{
-			if(*Modbus_InputIO[CylSh02]&&(*Modbus_InputIO[CylRe02]==0))  //气缸2舒张且没收缩
-			{
-				if(AllTime_Cnt==0)
-				{
-					Cylinder01=1;//气缸1舒张
+					Light_cnt =0;
+					Cylinder02=0;//气缸2舒张
 					ErrorTime_cnt=0;
 					CylinderStep=3;
 				}
-			}
-			else
-			{
-				ErrorTime_cnt++;//动作超时计数
-			}
-			
-			if(ErrorTime_cnt>100)//动作10*100ms则报故障
-			{
-				ErrorTime_cnt=0;
-				CylinderStep=0;
-				return 2;//气缸2故障
+				else
+				{
+					Error=2;
+					ErrorTime_cnt++;//动作超时计数
+				}
 			}
 			break;
 		}
-		case 3:
+		
+		case 3://气缸1压料
 		{
-			if(*Modbus_InputIO[CylSh01]&&(*Modbus_InputIO[CylRe01]==0))  //气缸1舒张且没收缩
+			if(*Modbus_InputIO[CylRe02]==0&&(*Modbus_InputIO[CylSh02])) 		  //气缸2舒张且没收缩为正常状态
 			{
-				Cylinder01=0;//气缸1收缩
-				ErrorTime_cnt=0;
-				CylinderStep=4;
+				if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01])) 		  //气缸收缩且没舒张为正常状态
+				{
+					Cylinder01=1;
+					ErrorTime_cnt=0;
+					CylinderStep=4;
+				}
+				else
+				{
+					Error=1;
+					ErrorTime_cnt++;//动作超时计数
+				}
 			}
 			else
 			{
+				Error=2;
 				ErrorTime_cnt++;//动作超时计数
-			}
-			
-			if(ErrorTime_cnt>100)//动作10*100ms则报故障
-			{
-				ErrorTime_cnt=0;
-				CylinderStep=0;
-				return 1;//气缸1故障
 			}
 			break;
 		}
-		case 4:
+		case 4://气缸1收回
 		{
-			if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01]))  			//气缸1收缩且没舒张
+			if(*Modbus_InputIO[CylRe01]==0&&(*Modbus_InputIO[CylSh01]))  //气缸舒张且没收缩
 			{
-				Cylinder02=0;//气缸2收缩
+				Cylinder01=0;
 				ErrorTime_cnt=0;
 				CylinderStep=5;
 			}
 			else
 			{
+				Error=1;
 				ErrorTime_cnt++;//动作超时计数
-			}
-			
-			if(ErrorTime_cnt>100)//动作10*100ms则报故障
-			{
-				ErrorTime_cnt=0;
-				CylinderStep=0;
-				return 1;//气缸1故障
 			}
 			break;
 		}
-		case 5:
+		case 5://气缸1收回完成
 		{
-			
-			if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸2收缩且没舒张为正常状态
+			if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01])) 		  //气缸收缩且没舒张为正常状态
 			{
-				cishujishu++;
-				if(cishujishu>200)
-				{
-					cishujishu=0;
-				}
-				
-				printf("Time=%d 次数:%d\n",Systime_cnt-systime,cishujishu);
 				ErrorTime_cnt=0;
-				CylinderStep=0;
+				CylinderStep=0;//步骤清零
+				Cylinder_Data[0]=Systime_cnt-systime;//线用次数来显示时间
+				cishucnt++;
+				printf("次数: %d      时间:%d\n",cishucnt,Cylinder_Data[0]);
 			}
 			else
 			{
+				Error=1;
 				ErrorTime_cnt++;//动作超时计数
-			}
-			
-			if(ErrorTime_cnt>100)//动作10*100ms则报故障
-			{
-				ErrorTime_cnt=0;
-				CylinderStep=0;
-				return 2;//气缸2故障
 			}
 			break;
 		}
 	}	
+	if(ErrorTime_cnt>100)//out 1s
+	{
+		return Error;//返回错误气缸号
+	}
 	return 0;
 }
 /*---------------------------------------------------瓶盖控制-----------------------------------------------------------*/
@@ -807,19 +815,6 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 			Connect_Data[CapM]=0;
 			break;
 		}
-		case InternaR_C: 	 //內构旋转气缸
-		{
-			Connect_Data[InternaR_C]=0;
-			break;
-		}
-		case CapR_C:			 //瓶盖旋转气缸
-		{
-			
-			Error=CylinderConnect04();
-			
-			Connect_Data[CapR_C]=0;
-			break;
-		}
 		case ScrewCap:		 //拧瓶盖
 		{
 			Connect_Data[ScrewCap]=0;
@@ -891,8 +886,8 @@ void ALLControl_10ms(void)
 	enqueue(ERROR_SQ,ERROR);//入列
 	ERROR=TurntableConnect();//转盘控制
 	enqueue(ERROR_SQ,ERROR);//入列
-	ERROR=CapCylinderControl();//瓶盖下压控制
-	enqueue(ERROR_SQ,ERROR);//入列
+//	ERROR=CapCylinderControl();//瓶盖下压控制
+//	enqueue(ERROR_SQ,ERROR);//入列
 	
 	if(!check_seqeue_empty(ERROR_SQ))//错误队列不为空则报错
 	{
