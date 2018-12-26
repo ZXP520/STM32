@@ -27,9 +27,9 @@ u8 RS485_TX_EN;
 3x，输入寄存器
 4x，保持寄存器
 */
-u32 Cylinder_Data[7]={0};					//气缸与计数寄存器4x 0-6
+u32 Cylinder_Data[20]={0};					//气缸与计数寄存器4x 0-6
 u32 Connect_Data[CONNECT_LEN]={0};//控制状态寄存器值
-u32 Status_Data[8]={0};	 				  //传感器状态寄存器
+u32 Status_Data[20]={0};	 				  //传感器状态寄存器
 
 
 
@@ -193,19 +193,18 @@ void Modbus_RegMap(void)
         //输出开关量寄存器指针指向---------------------------------------------
 				memset(Connect_Data,NULL,sizeof(Connect_Data));//清除控制寄存器
 				
-				Modbus_OutputIO[0]=(vu32*)&Connect_Data[StopStart]; 	 //启动停机
-				Modbus_OutputIO[1]=(vu32*)&Connect_Data[TimeOut]; 		 //暂停
-				Modbus_OutputIO[2]=(vu32*)&Connect_Data[CountClear]; 	 //计数清零
-				Modbus_OutputIO[3]=(vu32*)&Connect_Data[ReSet]; 	     //整机复位
-				Modbus_OutputIO[4]=(vu32*)&Connect_Data[BottleM];	   	 //瓶身上料
-				Modbus_OutputIO[5]=(vu32*)&Connect_Data[InternalM];	     //內构上料
-				Modbus_OutputIO[6]=(vu32*)&Connect_Data[CapM];	  		 //瓶盖上料
-				Modbus_OutputIO[7] = (vu32*)&Connect_Data[ScrewCap];	   //拧瓶控制
-				Modbus_OutputIO[8]= (vu32*)&Connect_Data[InternaPush_C];//推料气缸控制-內构
-				Modbus_OutputIO[9]= (vu32*)&Connect_Data[ScrewPush_C];  //推料气缸控制-瓶盖
-				Modbus_OutputIO[10]= (vu32*)&Connect_Data[Turntable];    //转盘控制
-				Modbus_OutputIO[11]= (vu32*)&Connect_Data[InternalPM_C]; //压料气缸控制-內构
-				Modbus_OutputIO[12]= (vu32*)&Connect_Data[CapPM_C];      //压料气缸控制-瓶盖
+				Modbus_OutputIO[0] = (vu32*)&Connect_Data[StopStart]; 	 //启动停机
+				Modbus_OutputIO[1] = (vu32*)&Connect_Data[CountClear]; 	 //计数清零
+				Modbus_OutputIO[2] = (vu32*)&Connect_Data[ReSet]; 	     //整机复位
+				Modbus_OutputIO[3] = (vu32*)&Connect_Data[BottleM];	   	 //瓶身上料
+				Modbus_OutputIO[4] = (vu32*)&Connect_Data[InternalM];	     //內构上料
+				Modbus_OutputIO[5] = (vu32*)&Connect_Data[CapM];	  		 //瓶盖上料
+				Modbus_OutputIO[6] = (vu32*)&Connect_Data[ScrewCap];	   //拧瓶控制
+				Modbus_OutputIO[7] = (vu32*)&Connect_Data[InternaPush_C];//推料气缸控制-內构
+				Modbus_OutputIO[8] = (vu32*)&Connect_Data[ScrewPush_C];  //推料气缸控制-瓶盖
+				Modbus_OutputIO[9] = (vu32*)&Connect_Data[Turntable];    //转盘控制
+				Modbus_OutputIO[10]= (vu32*)&Connect_Data[InternalPM_C]; //压料气缸控制-內构
+				Modbus_OutputIO[11]= (vu32*)&Connect_Data[CapPM_C];      //压料气缸控制-瓶盖
 				
 	
         
@@ -413,13 +412,7 @@ void RS485_Service(void)
                                                         case 5://写单个输出开关量
                                                         {
                                                                 Modbus_05_Solve();
-//																																for( i=0;i<15;i++)
-//																																{
-//																																	printf("%d",Connect_Data[i]);
-//																																	
-//																																}
-//																																printf("\n");
-																																		break;
+																																break;
                                                         }
                                                                 
                                                         case 15://写多个输出开关量

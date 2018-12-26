@@ -28,8 +28,6 @@ static void Stm32_Init(void)
 	STMFLASH_Write(FLASH_SAVE_ADDR,savedata,2);//写Flash数据
  	LED_Init();			     				//LED端口初始化
 	KEY_Init();          				//初始化与按键连接的硬件接口
-	TIM_SetCompare1(TIM3,600);
-	InitSequeuet(); 					  //队列初始化
 	printf("System inint sucess!\n");
 	
 }
@@ -38,7 +36,7 @@ int main(void)
 	Stm32_Init();
  	while(1)
 	{
-		RS485_Service();//modbus数据处理，1MS处理一次
+		
 		if(Flag_1ms)  //1MS
 		{
 			Flag_1ms=0;

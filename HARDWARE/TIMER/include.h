@@ -49,18 +49,17 @@
 
 //控制
 #define StopStart 	     0     //启动停机按钮
-#define TimeOut    		   1     //暂停
-#define CountClear 		   2	   //计数清零
-#define ReSet     		   3     //整机复位
-#define BottleM     	   4     //瓶身上料
-#define InternalM   	   5     //內构上料
-#define CapM         	   6     //瓶盖上料
-#define ScrewCap		     7	   //拧瓶盖
-#define InternaPush_C    8	   //推料气缸控制-內构
-#define ScrewPush_C	  	 9     //推料气缸控制-瓶盖
-#define Turntable		     10    //转盘控制
-#define InternalPM_C     11	   //压料气缸控制-內构
-#define CapPM_C          12    //压料气缸控制-瓶盖
+#define CountClear 		   1	   //计数清零
+#define ReSet     		   2     //整机复位
+#define BottleM     	   3     //瓶身上料
+#define InternalM   	   4     //內构上料
+#define CapM         	   5     //瓶盖上料
+#define ScrewCap		     6	   //拧瓶盖
+#define InternaPush_C    7	   //推料气缸控制-內构
+#define ScrewPush_C	  	 8     //推料气缸控制-瓶盖
+#define Turntable		     9     //转盘控制
+#define InternalPM_C     10	   //压料气缸控制-內构
+#define CapPM_C          11    //压料气缸控制-瓶盖
 typedef struct 
 {
 	u16 adc;
