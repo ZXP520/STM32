@@ -113,7 +113,6 @@ void Modbus_16_Solve(void);
 
 
 
-
 /*CRC校验函数   */
 u16 CRC_Compute(u8 *puchMsgg,u8 usDataLen)// puchMsgg校验信息，字节数
 {

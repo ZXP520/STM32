@@ -178,6 +178,7 @@ void RunStatus(void)
 
 /*------------------------------------------瓶  身--------------------------------------------------------------------*/
 u8 Turntable_step=0;//转盘步骤
+
 static u8 TurntableConnect(void)//转盘控制
 {
 	static u8 ErrorTime_cnt=0;
@@ -198,7 +199,7 @@ static u8 TurntableConnect(void)//转盘控制
 			}
 			else
 			{
-				return 10;//error
+				ErrorTime_cnt++;
 			}
 			break;
 		}
@@ -233,6 +234,8 @@ static u8 TurntableConnect(void)//转盘控制
 	}
 	if(ErrorTime_cnt>100)//timeout
 	{
+		ErrorTime_cnt=0;
+		Turntable_step=0;
 		return 10;//
 	}
 	return 0;//have no error
@@ -558,8 +561,11 @@ static u8 CapCylinderControl(void)
 	return 0;
 }
 
-
-
+/*---------------------------------------------------拧瓶控制-----------------------------------------------------------*/
+void ScrewCapControl01(u8 mode)
+{
+	Screw_Cap01=mode;
+}
 
 
 /*---------------------------------------------------故障报警-----------------------------------------------------------*/
@@ -627,6 +633,7 @@ static u8 Key_Scan(void)
 			return i;
 		}
 	}
+	
 	//启动按键状态不同了
 	if(Connect_Data[StopStart]!=StarStop)
 	{
@@ -640,6 +647,7 @@ static u8 Key_Scan(void)
 static void AllReSet(void)
 {
 	memset(Status_Data,0,sizeof(Status_Data));//清除状态寄存器ClearAllError
+	//Status_Data[6]=1;//整机运行状态
 	All_ERROR=0;
 }	
 
@@ -696,6 +704,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case ScrewCap:		 //拧瓶盖
 		{
+			ScrewCapControl01(1);
 			Connect_Data[ScrewCap]=0;
 			break;
 		}
@@ -741,7 +750,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 			Connect_Data[CapPM_C]=0;
 			break;
 		}
-		default :break;
+		default :ScrewCapControl01(0);break;
 		
 	}
 	
@@ -765,17 +774,17 @@ void ALLControl_10ms(void)
 	}
 	
 	ERROR=CylinderStepControl();//内构件下压控制
-	
 	if(ERROR)
 	{
 		All_ERROR=ERROR;
 	}
+	
 	ERROR=TurntableConnect();//转盘控制
-	
 	if(ERROR)
 	{
 		All_ERROR=ERROR;
 	}
+	
 	ERROR=CapCylinderControl();//瓶盖下压控制
 	if(ERROR)
 	{

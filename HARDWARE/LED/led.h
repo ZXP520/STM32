@@ -15,14 +15,14 @@
 ////////////////////////////////////////////////////////////////////////////////// 
 
 
-#define Cylinder01 PEout(13)//气缸01
-#define Cylinder02 PEout(11)//气缸02
-#define Cylinder03 PEout(9) //气缸03
-#define Cylinder04 PEout(7) //气缸04
-#define Cylinder05 PBout(1) //气缸05
-#define Cylinder06 PCout(5) //气缸06
-#define Screw_Cap01  PAout(7) //拧瓶盖
-#define Turntable01  PAout(5) //转盘
+#define Cylinder01 PEout(2)   //气缸01
+#define Cylinder02 PEout(4)   //气缸02
+#define Cylinder03 PEout(6)	  //气缸03
+#define Cylinder04 PCout(13) 	//气缸04
+#define Cylinder05 PCout(15) 	//气缸05
+#define Cylinder06 PCout(0) 	//气缸06
+#define Screw_Cap01  PEout(11) //拧瓶盖
+#define Turntable01  PEout(13) //转盘
 
 void LED_Init(void);//初始化
 
