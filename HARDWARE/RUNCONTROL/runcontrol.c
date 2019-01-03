@@ -573,7 +573,7 @@ u8 All_ERROR=0;
 void Wainmming(void)
 {
 
-	if(All_ERROR)//错误队列不为空则报错
+	if(All_ERROR)
 	{
 		switch(All_ERROR)
 		{
@@ -642,6 +642,7 @@ static u8 Key_Scan(void)
 	}
 	return 20;
 }
+
 
 /*---------------------------------------------------整机复位-----------------------------------------------------------*/
 static void AllReSet(void)
