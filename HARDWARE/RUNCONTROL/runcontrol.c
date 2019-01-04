@@ -97,6 +97,8 @@ void RunControl(void)
 }
 
 */
+u8 StopStart_Flag=0;//整机启动标志
+
 static void Wainmming(void);
 /*------------------------------------------运行状态周期监测--------------------------------------------------------------------*/
 
@@ -235,7 +237,7 @@ static u8 TurntableConnect(void)//转盘控制
 	if(ErrorTime_cnt>100)//timeout
 	{
 		ErrorTime_cnt=0;
-		Turntable_step=0;
+		Turntable_step=20;//错误
 		return 10;//
 	}
 	return 0;//have no error
@@ -343,24 +345,49 @@ static u8 CylinderStepControl(void)
 		
 		case 3://气缸1压料
 		{
-			if(*Modbus_InputIO[CylRe02]==0&&(*Modbus_InputIO[CylSh02])) 		  //气缸2舒张且没收缩为正常状态
+			if(StopStart_Flag) //启动模式
 			{
-				if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01])) 		  //气缸收缩且没舒张为正常状态
+				if(*Modbus_InputIO[CylRe02]==0&&(*Modbus_InputIO[CylSh02])&&Turntable_step==0) //气缸2舒张且没收缩为正常状态且转盘转动完成
 				{
-					Cylinder01=1;
-					ErrorTime_cnt=0;
-					CylinderStep=4;
+					if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01])) 		 						 //气缸收缩且没舒张为正常状态
+					{
+						Cylinder01=1;
+						ErrorTime_cnt=0;
+						CylinderStep=4;
+					}
+					else
+					{
+						Error=1;
+						ErrorTime_cnt++;//动作超时计数
+					}
 				}
 				else
 				{
-					Error=1;
+					Error=2;
 					ErrorTime_cnt++;//动作超时计数
 				}
 			}
-			else
+			else//测试模式
 			{
-				Error=2;
-				ErrorTime_cnt++;//动作超时计数
+				if(*Modbus_InputIO[CylRe02]==0&&(*Modbus_InputIO[CylSh02])) 		  //气缸2舒张且没收缩为正常状态
+				{
+					if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01])) 		  //气缸收缩且没舒张为正常状态
+					{
+						Cylinder01=1;
+						ErrorTime_cnt=0;
+						CylinderStep=4;
+					}
+					else
+					{
+						Error=1;
+						ErrorTime_cnt++;//动作超时计数
+					}
+				}
+				else
+				{
+					Error=2;
+					ErrorTime_cnt++;//动作超时计数
+				}
 			}
 			break;
 		}
@@ -399,6 +426,7 @@ static u8 CylinderStepControl(void)
 	}	
 	if(ErrorTime_cnt>100)//out 1s
 	{
+		CylinderStep=20;//错误
 		return Error;//返回错误气缸号
 	}
 	return 0;
@@ -500,24 +528,49 @@ static u8 CapCylinderControl(void)
 		
 		case 3://气缸3压料
 		{
-			if(*Modbus_InputIO[CylRe04]==0&&(*Modbus_InputIO[CylSh04])) 		  //气缸2舒张且没收缩为正常状态
+			if(StopStart_Flag)//运行状态
 			{
-				if(*Modbus_InputIO[CylSh03]==0&&(*Modbus_InputIO[CylRe03])) 		  //气缸收缩且没舒张为正常状态
+				if(*Modbus_InputIO[CylRe04]==0&&(*Modbus_InputIO[CylSh04])&&Turntable_step==0) 		  //气缸4舒张且没收缩为正常状态和转盘转动完成
 				{
-					Cylinder03=1;
-					ErrorTime_cnt=0;
-					CapCylinderStep=4;
+					if(*Modbus_InputIO[CylSh03]==0&&(*Modbus_InputIO[CylRe03])) 		  //气缸收缩且没舒张为正常状态
+					{
+						Cylinder03=1;
+						ErrorTime_cnt=0;
+						CapCylinderStep=4;
+					}
+					else
+					{
+						Error=3;
+						ErrorTime_cnt++;//动作超时计数
+					}
 				}
 				else
 				{
-					Error=3;
+					Error=4;
 					ErrorTime_cnt++;//动作超时计数
 				}
 			}
-			else
+			else  //调试
 			{
-				Error=4;
-				ErrorTime_cnt++;//动作超时计数
+				if(*Modbus_InputIO[CylRe04]==0&&(*Modbus_InputIO[CylSh04])) 		  //气缸4舒张且没收缩为正常状态
+				{
+					if(*Modbus_InputIO[CylSh03]==0&&(*Modbus_InputIO[CylRe03])) 		  //气缸收缩且没舒张为正常状态
+					{
+						Cylinder03=1;
+						ErrorTime_cnt=0;
+						CapCylinderStep=4;
+					}
+					else
+					{
+						Error=3;
+						ErrorTime_cnt++;//动作超时计数
+					}
+				}
+				else
+				{
+					Error=4;
+					ErrorTime_cnt++;//动作超时计数
+				}
 			}
 			break;
 		}
@@ -556,6 +609,7 @@ static u8 CapCylinderControl(void)
 	}	
 	if(ErrorTime_cnt>100)//out 1s
 	{
+		CapCylinderStep=20;//错误
 		return Error;//返回错误气缸号
 	}
 	return 0;
@@ -613,6 +667,7 @@ void Wainmming(void)
 		}
 		
 		Status_Data[6]=1;//整机运行状态
+		StopStart_Flag=0;//启动失能
 		printf("气缸%d--发生故障\n",ERROR);
 	}
 	
@@ -648,12 +703,17 @@ static u8 Key_Scan(void)
 static void AllReSet(void)
 {
 	memset(Status_Data,0,sizeof(Status_Data));//清除状态寄存器ClearAllError
+	StopStart_Flag=0;
+	Turntable_step=0;//转盘
+	CylinderStep=0;  //内构
+	
 	//Status_Data[6]=1;//整机运行状态
 	All_ERROR=0;
 }	
 
 /*---------------------------------------------------按钮控制-----------------------------------------------------------*/
 //按键总控制
+
 static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 {
 	u8 Error=0;
@@ -661,6 +721,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 	{
 		case StopStart: 	 //启动停机按钮
 		{
+			StopStart_Flag=Connect_Data[StopStart];
 			break;
 		}
 		case CountClear: 	 //计数清零
@@ -685,7 +746,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case InternalM:  	 //內构上料
 		{
-			if(CylinderStep==0)//空闲步骤才有效
+			if(CylinderStep==0&&StopStart_Flag==0)//空闲步骤且不在启动状态才有效
 			{
 				CylinderStep=1;
 			}
@@ -695,7 +756,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case CapM:				 //瓶盖上料
 		{
-			if(CapCylinderStep==0)
+			if(CapCylinderStep==0&&StopStart_Flag==0)
 			{
 				CapCylinderStep=1;//空闲步骤才有效
 			}
@@ -705,29 +766,36 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case ScrewCap:		 //拧瓶盖
 		{
-			ScrewCapControl01(1);
+			if(StopStart_Flag==0)
+			{
+				ScrewCapControl01(1);
+			}
 			Connect_Data[ScrewCap]=0;
 			break;
 		}
 		case InternaPush_C://推料气缸控制-內构
 		{
-			
-			Error=CylinderConnect02();
+			if(StopStart_Flag==0)
+			{
+				Error=CylinderConnect02();
+			}
 			
 			Connect_Data[InternaPush_C]=0;
 			break;
 		}
 		case ScrewPush_C:	 //推料气缸控制-瓶盖
 		{
-			
-			Error=CylinderConnect04();
+			if(StopStart_Flag==0)
+			{
+				Error=CylinderConnect04();
+			}
 			
 			Connect_Data[ScrewPush_C]=0;
 			break;
 		}
 		case Turntable:		 //转盘控制
 		{
-			if(Turntable_step==0)//在空闲步骤下才起效
+			if(Turntable_step==0&&StopStart_Flag==0)//在空闲步骤下才起效
 			{
 				Turntable_step=1;
 			}
@@ -737,16 +805,20 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case InternalPM_C: //压料气缸控制-內构
 		{
-			
-			Error=CylinderConnect01();
+			if(StopStart_Flag==0)
+			{
+				Error=CylinderConnect01();
+			}
 			
 			Connect_Data[InternalPM_C]=0;
 			break;
 		}
 		case CapPM_C:			 //压料气缸控制-瓶盖
 		{
-			
-			Error=CylinderConnect03();
+			if(StopStart_Flag==0)
+			{
+				Error=CylinderConnect03();
+			}
 			
 			Connect_Data[CapPM_C]=0;
 			break;
@@ -790,6 +862,20 @@ void ALLControl_10ms(void)
 	if(ERROR)
 	{
 		All_ERROR=ERROR;
+	}
+	
+	//机器启动
+	if(StopStart_Flag)
+	{
+		if(Turntable_step==0&&CylinderStep==0)//转盘转动完成，且內构下压完成
+		{
+			Turntable_step=1;//转盘转动
+		}
+		
+		if(CylinderStep==0)//內构下压完成
+		{
+			CylinderStep=1;  //內构下压
+		}
 	}
 	
 }
