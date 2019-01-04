@@ -194,21 +194,24 @@ static u8 TurntableConnect(void)//转盘控制
 		}
 		case 1:
 		{
-			if(Modbus_InputIO[TurTa01]==0)//转盘有信号
+			if(*Modbus_InputIO[TurTa01]!=0)//转盘有信号
 			{
 				Turntable01=1;//启动转盘
 				Turntable_step=2;
 			}
 			else
 			{
+				Turntable_step=2;
+				Turntable01=1;//启动转盘
 				ErrorTime_cnt++;
 			}
 			break;
 		}
 		case 2:
 		{
-			if(Modbus_InputIO[TurTa01])//转盘没信号no signal说明转盘转动了
+			if(*Modbus_InputIO[TurTa01]==0)//转盘没信号no signal说明转盘转动了
 			{
+				
 				Turntable_step=3;
 				ErrorTime_cnt=0;
 			}
@@ -221,7 +224,7 @@ static u8 TurntableConnect(void)//转盘控制
 		}
 		case 3:
 		{
-			if(Modbus_InputIO[TurTa01]==0)//hanve siganl
+			if(*Modbus_InputIO[TurTa01]!=0)//hanve siganl
 			{
 				Turntable01=0;//close
 				Turntable_step=0;
@@ -237,6 +240,7 @@ static u8 TurntableConnect(void)//转盘控制
 	if(ErrorTime_cnt>100)//timeout
 	{
 		ErrorTime_cnt=0;
+		Turntable01=0;//close
 		Turntable_step=20;//错误
 		return 10;//
 	}
