@@ -5,6 +5,7 @@
 
 #define CONNECT_LEN 20
 #define N 20
+#define SCREWCAPTIME 50//拧瓶时间500MS
 void RunControl(void);
 void WorkRunControl(void);
 //u8 CylinderAllConnect(u8 key);//不支持连按

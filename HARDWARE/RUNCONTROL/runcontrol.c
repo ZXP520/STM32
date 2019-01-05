@@ -180,7 +180,8 @@ void RunStatus(void)
 
 /*------------------------------------------瓶  身--------------------------------------------------------------------*/
 u8 Turntable_step=0;//转盘步骤
-
+u8 BottleM_Flag=0;  //瓶身上料
+u8 TurntableConnect_Flag=0;
 static u8 TurntableConnect(void)//转盘控制
 {
 	static u8 ErrorTime_cnt=0;
@@ -194,15 +195,21 @@ static u8 TurntableConnect(void)//转盘控制
 		}
 		case 1:
 		{
-			if(*Modbus_InputIO[TurTa01]!=0)//转盘有信号
+			if(StopStart_Flag||BottleM_Flag)//运行状态 //光电一有信号
 			{
+				//if(*Modbus_InputIO[Light01]==0)//test
+				{
+					BottleM_Flag=0;//瓶身上料
+					Turntable01=1;//启动转盘
+					Turntable_step=2;
+					ErrorTime_cnt++;
+				}
+	  	}
+			else if(TurntableConnect_Flag) //控制状态
+			{
+				TurntableConnect_Flag=0;
 				Turntable01=1;//启动转盘
 				Turntable_step=2;
-			}
-			else
-			{
-				Turntable_step=2;
-				Turntable01=1;//启动转盘
 				ErrorTime_cnt++;
 			}
 			break;
@@ -295,7 +302,7 @@ u32 Systime_cnt=0;
 u8 AllTime_Cnt=0;
 static u8 CylinderStepControl(void)
 {
-	static u8  ErrorTime_cnt=0,Light_cnt=0,Error=0,cishucnt=0;
+	static u8  ErrorTime_cnt=0,Error=0,cishucnt=0;
 	static u32 systime=0;
 
 	switch(CylinderStep)
@@ -320,20 +327,10 @@ static u8 CylinderStepControl(void)
 	  case 2://光电检测有料则气缸2推料
 		{
 						
-			if(*Modbus_InputIO[Light03]==0)//光电3滤波
-			{
-				Light_cnt++;
-			}
-			else
-			{
-				Light_cnt=0;
-			}
-			//if(Light_cnt>3)//光电传感器100ms内
-			if(*Modbus_InputIO[Light03]==0)//光电3滤波
+			//if(*Modbus_InputIO[Light03]==0)//光电3有信号//test
 			{	
 				if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸1收缩且没舒张为正常状态
 				{
-					Light_cnt =0;
 					Cylinder02=0;//气缸2舒张
 					ErrorTime_cnt=0;
 					CylinderStep=3;
@@ -430,6 +427,7 @@ static u8 CylinderStepControl(void)
 	}	
 	if(ErrorTime_cnt>100)//out 1s
 	{
+		ErrorTime_cnt=0;
 		CylinderStep=20;//错误
 		return Error;//返回错误气缸号
 	}
@@ -613,6 +611,7 @@ static u8 CapCylinderControl(void)
 	}	
 	if(ErrorTime_cnt>100)//out 1s
 	{
+		ErrorTime_cnt=0;
 		CapCylinderStep=20;//错误
 		return Error;//返回错误气缸号
 	}
@@ -620,10 +619,48 @@ static u8 CapCylinderControl(void)
 }
 
 /*---------------------------------------------------拧瓶控制-----------------------------------------------------------*/
-void ScrewCapControl01(u8 mode)
+u8 ScrewCapStep=0;//拧瓶步骤
+
+void ScrewCapControl01()
 {
-	Screw_Cap01=mode;
+	Screw_Cap01=~Screw_Cap01;
 }
+
+static void ScrewCapControl()
+{
+	static u8 worktime=0;
+	switch(ScrewCapStep)
+	{
+		case 0: break;
+		case 1:
+		{
+			Screw_Cap01=1;//拧瓶
+			ScrewCapStep=2;
+			break;
+		}
+		case 2:
+		{
+			worktime++;
+			if(worktime>SCREWCAPTIME)//拧瓶时间达到
+			{
+				worktime=0;
+				Screw_Cap01=0;//松瓶
+				ScrewCapStep=0;//步骤清零
+			}
+			break;
+		}
+		case 3:
+		{
+			break;
+		}
+		case 4:
+		{
+			break;
+		}
+		default :break;
+	}
+}
+
 
 
 /*---------------------------------------------------故障报警-----------------------------------------------------------*/
@@ -672,6 +709,7 @@ void Wainmming(void)
 		
 		Status_Data[6]=1;//整机运行状态
 		StopStart_Flag=0;//启动失能
+		Connect_Data[StopStart]=0;//启动按钮失能
 		printf("气缸%d--发生故障\n",ERROR);
 	}
 	
@@ -745,6 +783,8 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case BottleM:		 	 //瓶身上料
 		{
+			BottleM_Flag=1;
+			Turntable_step=1;
 			Connect_Data[BottleM]=0;
 			break;
 		}
@@ -772,7 +812,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		{
 			if(StopStart_Flag==0)
 			{
-				ScrewCapControl01(1);
+				ScrewCapStep=1;
 			}
 			Connect_Data[ScrewCap]=0;
 			break;
@@ -801,6 +841,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		{
 			if(Turntable_step==0&&StopStart_Flag==0)//在空闲步骤下才起效
 			{
+				TurntableConnect_Flag=1;//转盘控制标志
 				Turntable_step=1;
 			}
 			
@@ -827,7 +868,7 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 			Connect_Data[CapPM_C]=0;
 			break;
 		}
-		default :ScrewCapControl01(0);break;
+		default : break;
 		
 	}
 	
@@ -868,18 +909,31 @@ void ALLControl_10ms(void)
 		All_ERROR=ERROR;
 	}
 	
+	ScrewCapControl();//拧瓶控制
+	
+	
 	//机器启动
 	if(StopStart_Flag)
 	{
-		if(Turntable_step==0&&CylinderStep==0)//转盘转动完成，且內构下压完成
+		
+		if(Turntable_step==0&&ScrewCapStep==0)//转盘转动完成 拧瓶完成
+		{
+			ScrewCapStep=1;//拧瓶
+		}
+		
+		if(Turntable_step==0&&CylinderStep==0&&Screw_Cap01==0)//转盘转动完成，且內构下压完成 
 		{
 			Turntable_step=1;//转盘转动
 		}
+		
+		
 		
 		if(CylinderStep==0)//內构下压完成
 		{
 			CylinderStep=1;  //內构下压
 		}
+		
+		
 	}
 	
 }
