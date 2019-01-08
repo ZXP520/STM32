@@ -772,25 +772,83 @@ static u8 Key_Scan(void)
 
 
 /*---------------------------------------------------整机复位-----------------------------------------------------------*/
+u8 AllReSet_Flag=0;
 static void AllReSet(void)
 {
 	memset(Status_Data,0,sizeof(Status_Data));//清除状态寄存器ClearAllError
-	Cylinder01=0;//气缸01
-	Cylinder02=0;//气缸02
-	Cylinder03=0;//气缸03
-	Cylinder04=0;//气缸04
-	Cylinder05=0;//气缸05
-	Cylinder06=0;//气缸06
-	Screw_Cap01=0;//拧瓶
-	Turntable01=0;//转盘
-	StopStart_Flag=0;//启动标志
-	Turntable_step=0;//转盘
-	CylinderStep=0;  //内构
-	ScrewCapStep=0;  //拧瓶
-	
-	//Status_Data[6]=1;//整机运行状态
+	/*********复位****************/
+	Cylinder01=0;			//气缸01
+	Cylinder02=0;			//气缸02
+	Cylinder03=0;			//气缸03
+	Cylinder04=0;			//气缸04
+	Cylinder05=0;			//气缸05
+	Cylinder06=0;			//气缸06
+	Screw_Cap01=0;		//拧瓶
+	Turntable01=0;		//转盘
+	StopStart_Flag=0; //启动标志
+	Turntable_step=0; //转盘
+	CylinderStep=0;   //内构
+	ScrewCapStep=0;   //拧瓶
 	All_ERROR=0;
+	
+	/********判断机械位置********************/
+	
+	AllReSet_Flag=1;
+	
+	
 }	
+static u8 AllReSetstep(void)
+{
+	static u8 AllReSet_cnt=0;
+	static u8 TurnTableTime=0;
+	if(AllReSet_Flag==0x01)
+	{
+		AllReSet_cnt++;
+		if(AllReSet_cnt>50)//500ms
+		{
+			AllReSet_Flag=0;
+			AllReSet_cnt=0;
+			//內构
+			if((*Modbus_InputIO[CylRe02]==0&&*Modbus_InputIO[CylSh02])&&(*Modbus_InputIO[CylSh01]==0&&*Modbus_InputIO[CylRe01])) 		  //气缸2舒张且气缸1收缩
+			{
+				AllReSet_Flag |=0x02;
+			}
+			else
+			{
+				return 2;//error
+			}
+			//拧瓶
+			if(*Modbus_InputIO[CylSh05]==0&&*Modbus_InputIO[CylRe05])   //气缸5收缩
+			{
+				AllReSet_Flag |=0x08;
+			}
+			else
+			{
+				return 5;//error
+			}
+		}
+	}
+	if(AllReSet_Flag&0x0A) //0x02+0x08  转盘转动8次清料
+	{
+		if(TurnTableTime<8)
+		{
+			if(Turntable_step==0&&StopStart_Flag==0)//在空闲步骤下才起效
+			{
+				TurntableConnect_Flag=1;//转盘控制标志
+				Turntable_step=1;
+				TurnTableTime++;
+			}
+		}
+		else  //8次转完
+		{
+			AllReSet_Flag=0;
+			TurnTableTime=0;
+		}
+		
+	}
+	return 0;
+}
+
 
 /*---------------------------------------------------按钮控制-----------------------------------------------------------*/
 //按键总控制
@@ -929,11 +987,10 @@ void ALLControl_10ms(void)
 	ERROR=CylinderAllConnect(Key_Scan());//key control
 	
 	if(All_ERROR)//如果故障，急停
-		
-	
 	{
 		return;
 	}
+	
 	if(ERROR)
 	{
 		All_ERROR=ERROR;
@@ -958,11 +1015,15 @@ void ALLControl_10ms(void)
 	}
 	
 	ERROR=ScrewCapControl();//拧瓶控制
+	if(ERROR)
 	{
-		if(ERROR)
-		{
-			All_ERROR=ERROR;
-		}
+		All_ERROR=ERROR;
+	}
+	
+	ERROR=AllReSetstep();//复位检测
+	if(ERROR)
+	{
+		All_ERROR=ERROR;
 	}
 	
 	
