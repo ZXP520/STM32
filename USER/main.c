@@ -64,14 +64,11 @@ int main(void)
 		if(Flag_500ms)	//500MS
 		{
 			Flag_500ms=0;
-			//Cylinder_Data[0]+=1;
 		}
 		if(Flag_1000ms)  //1S
 		{
 			Flag_1000ms=0;
 			STMFLASH_Read(FLASH_SAVE_ADDR,readdata,2);//读Flash数据
-			//printf("%d %d\n",readdata[0],readdata[1]);
-			
 		}
 	}		
  }

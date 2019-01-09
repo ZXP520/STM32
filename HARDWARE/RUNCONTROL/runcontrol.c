@@ -790,7 +790,7 @@ static void AllReSet(void)
 	CylinderStep=0;   //内构
 	ScrewCapStep=0;   //拧瓶
 	All_ERROR=0;
-	
+	Connect_Data[StopStart]=0;//启动按钮失能
 	/********判断机械位置********************/
 	
 	AllReSet_Flag=1;

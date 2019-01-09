@@ -1,5 +1,5 @@
 Dependencies for Project 'USART', Target 'Target 1': (DO NOT MODIFY !)
-F (.\main.c)(0x5C234846)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\ADC -I..\HARDWARE\PID -I..\HARDWARE\RUNCONTROL -I..\HARDWARE\MODBUS -I..\HARDWARE\STMFLASH-I D:\Allprobject\bukeTFT\USER\RTE-I D:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-I D:\keil5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
+F (.\main.c)(0x5C346500)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\ADC -I..\HARDWARE\PID -I..\HARDWARE\RUNCONTROL -I..\HARDWARE\MODBUS -I..\HARDWARE\STMFLASH-I D:\Allprobject\bukeTFT\USER\RTE-I D:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-I D:\keil5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
 I (..\SYSTEM\sys\sys.h)(0x5BE3A193)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -137,7 +137,7 @@ I (..\HARDWARE\STMFLASH\stmflash.h)(0x5056EB30)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 I (..\HARDWARE\KEY\key.h)(0x5C19FB94)
 I (..\HARDWARE\LED\led.h)(0x5C32DA2B)
-F (..\HARDWARE\RUNCONTROL\runcontrol.c)(0x5C340E52)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\ADC -I..\HARDWARE\PID -I..\HARDWARE\RUNCONTROL -I..\HARDWARE\MODBUS -I..\HARDWARE\STMFLASH-I D:\Allprobject\bukeTFT\USER\RTE-I D:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-I D:\keil5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\runcontrol.o --omf_browse ..\obj\runcontrol.crf --depend ..\obj\runcontrol.d)
+F (..\HARDWARE\RUNCONTROL\runcontrol.c)(0x5C3418D9)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\ADC -I..\HARDWARE\PID -I..\HARDWARE\RUNCONTROL -I..\HARDWARE\MODBUS -I..\HARDWARE\STMFLASH-I D:\Allprobject\bukeTFT\USER\RTE-I D:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-I D:\keil5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\runcontrol.o --omf_browse ..\obj\runcontrol.crf --depend ..\obj\runcontrol.d)
 I (..\SYSTEM\sys\sys.h)(0x5BE3A193)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
 I (..\CORE\core_cm3.h)(0x4D523B58)
@@ -161,7 +161,7 @@ I (..\HARDWARE\RUNCONTROL\runcontrol.h)(0x5C331019)
 I (..\HARDWARE\MODBUS\RS485.h)(0x5C2344E8)
 I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5475F300)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5475F300)
-F (..\HARDWARE\MODBUS\RS485.c)(0x5C243958)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\ADC -I..\HARDWARE\PID -I..\HARDWARE\RUNCONTROL -I..\HARDWARE\MODBUS -I..\HARDWARE\STMFLASH-I D:\Allprobject\bukeTFT\USER\RTE-I D:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-I D:\keil5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\rs485.o --omf_browse ..\obj\rs485.crf --depend ..\obj\rs485.d)
+F (..\HARDWARE\MODBUS\RS485.c)(0x5C346522)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\HARDWARE\LED -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\USER -I..\STM32F10x_FWLib\inc -I..\CORE -I..\HARDWARE\KEY -I..\HARDWARE\TIMER -I..\HARDWARE\ADC -I..\HARDWARE\PID -I..\HARDWARE\RUNCONTROL -I..\HARDWARE\MODBUS -I..\HARDWARE\STMFLASH-I D:\Allprobject\bukeTFT\USER\RTE-I D:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.1.0\Device\Include-I D:\keil5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F10X_HD -DSTM32F10X_HD -DUSE_STDPERIPH_DRIVER-o ..\obj\rs485.o --omf_browse ..\obj\rs485.crf --depend ..\obj\rs485.d)
 I (..\HARDWARE\MODBUS\RS485.h)(0x5C2344E8)
 I (..\SYSTEM\sys\sys.h)(0x5BE3A193)
 I (..\USER\stm32f10x.h)(0x4D783CB4)
