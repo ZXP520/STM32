@@ -194,7 +194,7 @@ void Modbus_RegMap(void)
 				
 				Modbus_OutputIO[0] = (vu32*)&Connect_Data[StopStart]; 	 //启动停机
 				Modbus_OutputIO[1] = (vu32*)&Connect_Data[CountClear]; 	 //计数清零
-				Modbus_OutputIO[2] = (vu32*)&Connect_Data[ReSet]; 	     //整机复位
+				Modbus_OutputIO[2] = (vu32*)&Connect_Data[ReSet]; 	     //关机|复位
 				Modbus_OutputIO[3] = (vu32*)&Connect_Data[BottleM];	   	 //瓶身上料
 				Modbus_OutputIO[4] = (vu32*)&Connect_Data[InternalM];	     //內构上料
 				Modbus_OutputIO[5] = (vu32*)&Connect_Data[CapM];	  		 //瓶盖上料

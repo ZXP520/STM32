@@ -197,7 +197,7 @@ static u8 TurntableConnect(void)//转盘控制
 		{
 			if(StopStart_Flag||BottleM_Flag)//运行状态 //光电一有信号
 			{
-				//if(*Modbus_InputIO[Light01]==0)//test
+				if(*Modbus_InputIO[Light01]==0)//test
 				{
 					BottleM_Flag=0;//瓶身上料
 					Turntable01=1;//启动转盘
@@ -327,7 +327,7 @@ static u8 CylinderStepControl(void)
 	  case 2://光电检测有料则气缸2推料
 		{
 						
-			//if(*Modbus_InputIO[Light03]==0)//光电3有信号//test
+			if(*Modbus_InputIO[Light03]==0)//光电3有信号//test
 			{	
 				if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸1收缩且没舒张为正常状态
 				{
@@ -362,13 +362,13 @@ static u8 CylinderStepControl(void)
 						ErrorTime_cnt++;//动作超时计数
 					}
 				}
-				else
+				else//等待转盘转动
 				{
-					Error=2;
-					ErrorTime_cnt++;//动作超时计数
+//					Error=2;
+//					ErrorTime_cnt++;//动作超时计数
 				}
 			}
-			else//测试模式
+			else if(Turntable_step==0)//测试模式  Turntable_step==0解决暂停自动压料问题，转盘没转不能压料，不然会压爆；
 			{
 				if(*Modbus_InputIO[CylRe02]==0&&(*Modbus_InputIO[CylSh02])) 		  //气缸2舒张且没收缩为正常状态
 				{
@@ -790,7 +790,7 @@ static void AllReSet(void)
 	CylinderStep=0;   //内构
 	ScrewCapStep=0;   //拧瓶
 	All_ERROR=0;
-	
+	Connect_Data[StopStart]=0;//启动按钮失能
 	/********判断机械位置********************/
 	
 	AllReSet_Flag=1;
@@ -801,6 +801,7 @@ static u8 AllReSetstep(void)
 {
 	static u8 AllReSet_cnt=0;
 	static u8 TurnTableTime=0;
+	static u8 ClearStep=0;//清料步骤
 	if(AllReSet_Flag==0x01)
 	{
 		AllReSet_cnt++;
@@ -834,9 +835,46 @@ static u8 AllReSetstep(void)
 		{
 			if(Turntable_step==0&&StopStart_Flag==0)//在空闲步骤下才起效
 			{
-				TurntableConnect_Flag=1;//转盘控制标志
-				Turntable_step=1;
-				TurnTableTime++;
+				if(TurnTableTime==1) //复位清料
+				{
+					switch(ClearStep)
+					{
+						case 0:
+						{
+							Cylinder01=1;//气缸01舒张
+							ClearStep=1;
+							break;
+						}
+						case 1:
+						{
+							if(*Modbus_InputIO[CylSh01]&&(*Modbus_InputIO[CylRe01]==0))  //气缸舒张且没收缩
+							{
+								Cylinder01=0;//气缸01收缩
+								ClearStep=2;
+							}
+							
+							break;
+						}
+						case 2:
+						{
+							if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01]))  			//气缸收缩且没舒张
+							{
+								ClearStep=0;//清料完成
+								TurntableConnect_Flag=1;//转盘控制标志
+								Turntable_step=1;
+								TurnTableTime++;
+							}
+							break;
+						}
+						default :break;
+					}
+				}
+				else
+				{
+					TurntableConnect_Flag=1;//转盘控制标志
+					Turntable_step=1;
+					TurnTableTime++;
+				}
 			}
 		}
 		else  //8次转完
