@@ -21,7 +21,7 @@
 #define Cylinder04 PCout(13) 	//气缸04
 #define Cylinder05 PCout(15) 	//气缸05
 #define Cylinder06 PCout(0) 	//气缸06
-#define Screw_Cap01  PCout(2) //拧瓶盖
+#define Screw_Cap01 PCout(15)// PCout(2) //拧瓶盖0111拧瓶盖就是气缸05
 #define Turntable01  PEout(13) //转盘
 
 void LED_Init(void);//初始化

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\USART.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\USART.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Jan 09 11:53:03 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Fri Jan 11 20:19:00 2019
 <BR><P>
 <H3>Maximum Stack Usage =        152 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -367,7 +367,7 @@ Global Symbols
 
 <P><STRONG><a name="[10a]"></a>ScrewCapControl01</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, runcontrol.o(.text), UNUSED)
 
-<P><STRONG><a name="[69]"></a>ALLControl_10ms</STRONG> (Thumb, 184 bytes, Stack size 16 bytes, runcontrol.o(.text))
+<P><STRONG><a name="[69]"></a>ALLControl_10ms</STRONG> (Thumb, 288 bytes, Stack size 16 bytes, runcontrol.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
 <LI>Call Chain = ALLControl_10ms &rArr; CapCylinderControl &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1380,7 +1380,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_GetBank1Status
 </UL>
-<BR>[Called By]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramWord
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramOptionByteData
+<LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramWord
 <LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EraseOptionBytes
 <LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EraseAllPages
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramHalfWord
@@ -1388,7 +1389,6 @@ Global Symbols
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_UserOptionByteConfig
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ReadOutProtection
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EnableWriteProtection
-<LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramOptionByteData
 </UL>
 
 <P><STRONG><a name="[b0]"></a>FLASH_ErasePage</STRONG> (Thumb, 72 bytes, Stack size 12 bytes, stm32f10x_flash.o(.text))
@@ -1648,7 +1648,7 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CylinderAllConnect
 </UL>
 
-<P><STRONG><a name="[8a]"></a>CapCylinderControl</STRONG> (Thumb, 538 bytes, Stack size 8 bytes, runcontrol.o(.text))
+<P><STRONG><a name="[8a]"></a>CapCylinderControl</STRONG> (Thumb, 508 bytes, Stack size 8 bytes, runcontrol.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136 + Unknown Stack Size
 <LI>Call Chain = CapCylinderControl &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -1657,7 +1657,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALLControl_10ms
 </UL>
 
-<P><STRONG><a name="[94]"></a>ScrewCapControl</STRONG> (Thumb, 334 bytes, Stack size 0 bytes, runcontrol.o(.text))
+<P><STRONG><a name="[94]"></a>ScrewCapControl</STRONG> (Thumb, 330 bytes, Stack size 0 bytes, runcontrol.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALLControl_10ms
 </UL>
 
@@ -1665,7 +1665,7 @@ Local Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALLControl_10ms
 </UL>
 
-<P><STRONG><a name="[8b]"></a>AllReSet</STRONG> (Thumb, 88 bytes, Stack size 8 bytes, runcontrol.o(.text))
+<P><STRONG><a name="[8b]"></a>AllReSet</STRONG> (Thumb, 92 bytes, Stack size 8 bytes, runcontrol.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = AllReSet &rArr; __aeabi_memclr4
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
@@ -1673,7 +1673,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CylinderAllConnect
 </UL>
 
-<P><STRONG><a name="[95]"></a>AllReSetstep</STRONG> (Thumb, 306 bytes, Stack size 0 bytes, runcontrol.o(.text))
+<P><STRONG><a name="[95]"></a>AllReSetstep</STRONG> (Thumb, 350 bytes, Stack size 0 bytes, runcontrol.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ALLControl_10ms
 </UL>
 
