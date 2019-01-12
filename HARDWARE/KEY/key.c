@@ -28,7 +28,7 @@ void KEY_Init(void) //IO初始化
  	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	
 	// PB 5
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4|GPIO_Pin_6|GPIO_Pin_9|GPIO_Pin_12|GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4|GPIO_Pin_6|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_12|GPIO_Pin_14;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; 
  	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
@@ -43,7 +43,7 @@ void KEY_Init(void) //IO初始化
  	GPIO_Init(GPIOD, &GPIO_InitStructure);
 	
 	// PE 1
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;//PE1~1
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1|GPIO_Pin_10|GPIO_Pin_12|GPIO_Pin_14;//PE1~1
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //设置成浮空输入
  	GPIO_Init(GPIOE, &GPIO_InitStructure);//初始化GPIOE1
 	

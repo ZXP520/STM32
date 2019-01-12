@@ -98,7 +98,8 @@ void RunControl(void)
 
 */
 u8 StopStart_Flag=0;//整机启动标志
-
+u8 FiestStart_Flag=0;//初次启动标志
+u8 All_ERROR=0;//总错误位
 static void Wainmming(void);
 /*------------------------------------------运行状态周期监测--------------------------------------------------------------------*/
 
@@ -175,6 +176,19 @@ void RunStatus(void)
 		Status_Data[5]=1;
 	}
 	
+	if(StopStart_Flag)//启动则开吹起
+	{
+		Cylinder06=0;
+		TurnOnLedGreen();
+	}
+	else							//暂停关吹气
+	{
+		if(All_ERROR==0)//暂停
+		{
+			TurnOnLedellow();
+		}
+		Cylinder06=1;
+	}
 	
 }
 
@@ -244,7 +258,7 @@ static u8 TurntableConnect(void)//转盘控制
 			break;
 		}
 	}
-	if(ErrorTime_cnt>100)//timeout
+	if(ErrorTime_cnt>200)//timeout
 	{
 		ErrorTime_cnt=0;
 		Turntable01=0;//close
@@ -503,9 +517,9 @@ static u8 CapCylinderControl(void)
 						
 			if(*Modbus_InputIO[Light04]==0)//光电3滤波test
 			{	
-				if(*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04])) 		  //气缸1收缩且没舒张为正常状态
+				if(*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04])) 		  //气缸4收缩且没舒张为正常状态
 				{
-					Cylinder04=0;//气缸2舒张
+					Cylinder04=0;//气缸4舒张
 					ErrorTime_cnt=0;
 					CapCylinderStep=3;
 				}
@@ -538,8 +552,8 @@ static u8 CapCylinderControl(void)
 				}
 				else
 				{
-					Error=4;
-					ErrorTime_cnt++;//动作超时计数
+//					Error=4;
+//					ErrorTime_cnt++;//动作超时计数
 				}
 			}
 			else  //调试
@@ -599,7 +613,7 @@ static u8 CapCylinderControl(void)
 			break;
 		}
 	}	
-	if(ErrorTime_cnt>100)//out 1s
+	if(ErrorTime_cnt>200)//out 1s
 	{
 		ErrorTime_cnt=0;
 		CapCylinderStep=20;//错误
@@ -671,7 +685,7 @@ static u8 ScrewCapControl()
 		}
 		default :break;
 	}
-	if(ErrorTime_cnt>100)//out 1s
+	if(ErrorTime_cnt>200)//out 1s
 	{
 		ErrorTime_cnt=0;
 		ScrewCapStep=20;//错误
@@ -683,7 +697,9 @@ static u8 ScrewCapControl()
 
 
 /*---------------------------------------------------故障报警-----------------------------------------------------------*/
-u8 All_ERROR=0;
+u8 AllReSet_Flag=0;
+
+//100ms
 void Wainmming(void)
 {
 
@@ -727,10 +743,18 @@ void Wainmming(void)
 			default :break;
 		}
 		
+		//红灯闪烁
+		TurnOnLedRed();
+		//停转盘
+	  TurntableConnect_Flag=0;//转盘控制标志
+		AllReSet_Flag=0;
+		Turntable01=0;
+		
 		Status_Data[6]=1;//整机运行状态
 		StopStart_Flag=0;//启动失能
 		Connect_Data[StopStart]=0;//启动按钮失能
 		printf("气缸%d--发生故障\n",ERROR);
+		
 	}
 	
 }
@@ -743,6 +767,28 @@ static u8 Key_Scan(void)
 {
 	u8 i;
 	static u8 StarStop=0;
+	
+	if(PBin(10))		//急停是反的
+	{
+		All_ERROR=13;//急停
+	}
+	
+	if(PEin(10)==0&&AllReSet_Flag==0)
+	{
+		Connect_Data[StopStart]=1; 	 //启动  按键按下为低电平
+	}
+	else if(PEin(12)==0)
+	{
+		Connect_Data[StopStart]=0; 	 //停机
+	}
+	
+	if(PEin(14)==0)  //关机|复位
+	{
+		Connect_Data[ReSet]=1;
+	}
+	
+	
+	
 	for(i=1;i<CONNECT_LEN;i++)
 	{
 		if(Connect_Data[i])
@@ -752,7 +798,7 @@ static u8 Key_Scan(void)
 	}
 	
 	//启动按键状态不同了
-	if(Connect_Data[StopStart]!=StarStop)
+	if(Connect_Data[StopStart]!=StarStop&&AllReSet_Flag==0)//复位结束才能启动
 	{
 		StarStop=Connect_Data[StopStart];
 		return 0;
@@ -762,7 +808,8 @@ static u8 Key_Scan(void)
 
 
 /*---------------------------------------------------整机复位-----------------------------------------------------------*/
-u8 AllReSet_Flag=0;
+//u8 AllReSet_Flag=0;
+u8 TurnTableTime=0;//复位转盘转动次数
 static void AllReSet(void)
 {
 	memset(Status_Data,0,sizeof(Status_Data));//清除状态寄存器ClearAllError
@@ -776,22 +823,29 @@ static void AllReSet(void)
 	Screw_Cap01=0;		//拧瓶
 	Turntable01=0;		//转盘
 	StopStart_Flag=0; //启动标志
+	
+	TurnTableTime=0;
 	Turntable_step=0; //转盘
+	TurntableConnect_Flag=0;//转盘控制标志
+	
 	CylinderStep=0;   //内构
 	CapCylinderStep=0;//瓶盖
 	ScrewCapStep=0;   //拧瓶
 	All_ERROR=0;
 	Connect_Data[StopStart]=0;//启动按钮失能
+	FiestStart_Flag=0;//初次启动标志清除
 	/********判断机械位置********************/
 	
 	AllReSet_Flag=1;
 	
 	
 }	
+
+
 static u8 AllReSetstep(void)
 {
+	static u8  ErrorTime_cnt=0;
 	static u8 AllReSet_cnt=0;
-	static u8 TurnTableTime=0;
 	static u8 ClearStep=0;//清料步骤
 	if(AllReSet_Flag==0x01)
 	{
@@ -807,6 +861,7 @@ static u8 AllReSetstep(void)
 			}
 			else
 			{
+				AllReSet_Flag=0;
 				return 2;//error
 			}
 			//拧瓶
@@ -816,6 +871,7 @@ static u8 AllReSetstep(void)
 			}
 			else
 			{
+				AllReSet_Flag=0;
 				return 5;//error
 			}
 		}
@@ -842,9 +898,14 @@ static u8 AllReSetstep(void)
 							if(*Modbus_InputIO[CylSh01]&&(*Modbus_InputIO[CylRe01]==0)&&
 								 *Modbus_InputIO[CylSh03]&&(*Modbus_InputIO[CylRe03]==0))   //气缸舒张且没收缩
 							{
+								ErrorTime_cnt=0;
 								Cylinder01=0;//气缸01收缩
 								Cylinder03=0;//气缸03收缩
 								ClearStep=2;
+							}
+							else
+							{
+								ErrorTime_cnt++;
 							}
 							
 							break;
@@ -854,18 +915,32 @@ static u8 AllReSetstep(void)
 							if(*Modbus_InputIO[CylSh01]==0&&(*Modbus_InputIO[CylRe01])&&
 								 *Modbus_InputIO[CylSh03]==0&&(*Modbus_InputIO[CylRe03]))  			//气缸收缩且没舒张
 							{
+								ErrorTime_cnt=0;
 								ClearStep=0;//清料完成
 								TurntableConnect_Flag=1;//转盘控制标志
 								Turntable_step=1;
 								TurnTableTime++;
 							}
+							else
+							{
+								ErrorTime_cnt++;
+							}
 							break;
 						}
 						default :break;
 					}
+					if(ErrorTime_cnt>100)
+					{
+						ClearStep=0;
+						AllReSet_Flag=0;
+						TurnTableTime=0;
+						ErrorTime_cnt=0;
+						return 13;
+					}
 				}
 				else
 				{
+					ClearStep=0;
 					TurntableConnect_Flag=1;//转盘控制标志
 					Turntable_step=1;
 					TurnTableTime++;
@@ -906,7 +981,10 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case ReSet: 		 	 //整机复位
 		{
-			AllReSet();
+			if(AllReSet_Flag==0)
+			{
+				AllReSet();
+			}
 			
 			Connect_Data[ReSet]=0;
 			break;
@@ -1061,9 +1139,8 @@ void ALLControl_10ms(void)
 	
 	
 	//机器启动 总流程控制
-	if(StopStart_Flag)
+	if(StopStart_Flag)//复位结束才能启动
 	{
-		
 		if(Turntable_step==0&&ScrewCapStep==0&&Step_Flag==0)//转盘转动完成 拧瓶完成
 		{
 			Step_Flag=1;
@@ -1074,8 +1151,22 @@ void ALLControl_10ms(void)
 		{
 			Step_Flag=0;
 			Turntable_step=1;//转盘转动
-			CylinderStep=1;  //內构下压
-			CapCylinderStep=1;
+			
+			if(FiestStart_Flag<5)
+			{
+				FiestStart_Flag++;//初次启动标志
+			}
+			
+			if(FiestStart_Flag>1)//内构初次启动前两次不动
+			{
+				CylinderStep=1;  //內构下压
+			}
+			
+			if(FiestStart_Flag>3)//瓶盖初次启动前三次不动
+			{
+				CapCylinderStep=1;//瓶盖下压
+			}
+				
 		}	
 	}
 	

@@ -30,28 +30,63 @@ void LED_Init(void)
  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO口速度为50MHz
  GPIO_Init(GPIOA, &GPIO_InitStructure);					 //根据设定参数初始化GPIOB.5
 	
-// //PB1
-// GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;				 
-// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //推挽输出
-// GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO口速度为50MHz
-// GPIO_Init(GPIOB, &GPIO_InitStructure);					 //根据设定参数初始化GPIOB.5
+ //PB1
+ GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;				 
+ GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //推挽输出
+ GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO口速度为50MHz
+ GPIO_Init(GPIOB, &GPIO_InitStructure);					 //根据设定参数初始化GPIOB.5
 	
- //PC0 C2 C13 C15
- GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_2|GPIO_Pin_13|GPIO_Pin_15;				 
+ //PC0 C2 C5 C13 C15
+ GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_2|GPIO_Pin_5|GPIO_Pin_13|GPIO_Pin_15;				 
  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //推挽输出
  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO口速度为50MHz
  GPIO_Init(GPIOC, &GPIO_InitStructure);					 //根据设定参数初始化GPIOB.5
  
- //PE2 E4 E6 E11 E13
- GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2|GPIO_Pin_4|GPIO_Pin_6|GPIO_Pin_11|GPIO_Pin_13;				 
+ //PE2 E4 E6 E7 E9 E11 E13
+ GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2|GPIO_Pin_4|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_9|GPIO_Pin_11|GPIO_Pin_13;				 
  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //推挽输出
  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO口速度为50MHz
  GPIO_Init(GPIOE, &GPIO_InitStructure);					 //根据设定参数初始化GPIOB.5
 	
  //输出低
  GPIO_ResetBits(GPIOA,GPIO_Pin_0);						
-// GPIO_ResetBits(GPIOB,GPIO_Pin_1);		
- GPIO_ResetBits(GPIOC,GPIO_Pin_0|GPIO_Pin_2|GPIO_Pin_13|GPIO_Pin_15);						 
- GPIO_ResetBits(GPIOE,GPIO_Pin_2|GPIO_Pin_4|GPIO_Pin_6|GPIO_Pin_11|GPIO_Pin_13);						  
+ GPIO_ResetBits(GPIOB,GPIO_Pin_1);		
+ GPIO_ResetBits(GPIOC,GPIO_Pin_0|GPIO_Pin_2|GPIO_Pin_5|GPIO_Pin_13|GPIO_Pin_15);						 
+ GPIO_ResetBits(GPIOE,GPIO_Pin_2|GPIO_Pin_4|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_9|GPIO_Pin_11|GPIO_Pin_13);
+	
+}
+void TurnOnLedRed(void)
+{
+	static u8 LedRedTime_Cnt=0;
+	LedRedTime_Cnt++;
+	if(LedRedTime_Cnt<11)//1s
+	{
+		BeefLedRed=1;
+		LedYellow=0;
+		LedGreen=0;
+	}
+	else if(LedRedTime_Cnt>20)
+	{
+		LedRedTime_Cnt=0;
+	}
+	else
+	{
+		BeefLedRed=0;
+		LedYellow=0;
+		LedGreen=0;
+	}
+	
+}
+void TurnOnLedellow(void)
+{
+	BeefLedRed=0;
+	LedYellow=1;
+	LedGreen=0;
+}
+void TurnOnLedGreen(void)
+{
+	BeefLedRed=0;
+	LedYellow=0;
+	LedGreen=1;
 }
  
