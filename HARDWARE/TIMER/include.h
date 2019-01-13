@@ -8,6 +8,9 @@
 #include <stdbool.h>
 #include "key.h"
 #include "led.h"
+
+#define FLASH_SAVE_ADDR  0X08070000 				//flash存储地址
+
 //读信号
 #define	CylSh01 0		//PE1		//气缸01收缩  内构压  对应屏幕0X1寄存器
 #define	CylRe01 1		//PB9		//气缸01舒张
