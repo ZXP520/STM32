@@ -27,7 +27,7 @@ u8 RS485_TX_EN;
 3x，输入寄存器
 4x，保持寄存器
 */
-u32 Cylinder_Data[20]={0};					//气缸与计数寄存器4x 0-6
+u16 Cylinder_Data[20]={0};					//气缸与计数寄存器4x 0-6
 u32 Connect_Data[CONNECT_LEN]={0};//控制状态寄存器值
 u32 Status_Data[20]={0};	 				  //传感器状态寄存器
 
@@ -37,7 +37,7 @@ u32 Status_Data[20]={0};	 				  //传感器状态寄存器
 //Modbus寄存器和单片机寄存器的映射关系
 vu32 *Modbus_InputIO[100];//输入开关量寄存器指针(这里使用的是位带操作)
 vu32 *Modbus_OutputIO[100];//输出开关量寄存器指针(这里使用的是位带操作)
-u16 *Modbus_HoldReg[100];//保持寄存器指针
+u16 *Modbus_HoldReg[20];//保持寄存器指针
 
 
 
@@ -211,18 +211,21 @@ void Modbus_RegMap(void)
 				
         //保持寄存器指针指向-------------------------------------------------------------------
 				Cylinder_Data[1]=0;
-				Cylinder_Data[2]=1;
-				Cylinder_Data[3]=2;
+				Cylinder_Data[2]=0;
+				Cylinder_Data[3]=0;
 				Cylinder_Data[4]=0;
-				Cylinder_Data[5]=1;
-				Cylinder_Data[6]=2;
+				Cylinder_Data[5]=0;
+				Cylinder_Data[6]=0;
+				Cylinder_Data[7]=0;
 				
-				Modbus_HoldReg[0]=(u16*)&Cylinder_Data[0];//产量计数 
-				Modbus_HoldReg[1]=(u16*)&Cylinder_Data[1];//推料气缸位置-內构   0-初  1-末  2-中
-				Modbus_HoldReg[2]=(u16*)&Cylinder_Data[2];//压料气缸位置 
-				Modbus_HoldReg[3]=(u16*)&Cylinder_Data[3];//推料气缸位置 -瓶盖	0-初  1-末  2-中
-						
+				Modbus_HoldReg[0]=(u16*)&Cylinder_Data[0];//产量计数 低位
+				Modbus_HoldReg[1]=(u16*)&Cylinder_Data[1];//产量计数 高位
+				Modbus_HoldReg[2]=(u16*)&Cylinder_Data[2];//运行周期 ms
+				Modbus_HoldReg[3]=(u16*)&Cylinder_Data[3];//推料气缸位置-內构   0-初  1-末  2-中
 				Modbus_HoldReg[4]=(u16*)&Cylinder_Data[4];//压料气缸位置 
+				Modbus_HoldReg[5]=(u16*)&Cylinder_Data[5];//推料气缸位置 -瓶盖	0-初  1-末  2-中					
+				Modbus_HoldReg[6]=(u16*)&Cylinder_Data[6];//压料气缸位置 
+				Modbus_HoldReg[7]=(u16*)&Cylinder_Data[7];//错误编号
         
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@ static void Stm32_Init(void)
 	uart_init(115200);				  //串口初始化为115200
  	LED_Init();			     				//LED端口初始化
 	KEY_Init();          				//初始化与按键连接的硬件接口
+	STMFLASH_Read(FLASH_SAVE_ADDR,Cylinder_Data,2);//读Flash数据  产量数据
 	printf("System inint sucess!\n");
 	
 }

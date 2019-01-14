@@ -22,14 +22,15 @@
 #define Cylinder05 PCout(15) 	//气缸05
 #define Cylinder06 PCout(0) 	//气缸06  吹气
 #define Screw_Cap01  PCout(15)// PCout(2) //拧瓶盖0111 拧瓶盖就是气缸05
+#define AllPower 	   PEout(11)   //总电控制
 #define Turntable01  PEout(13) //转盘PEout(11)为继电器2
 #define BeefLedRed   PEout(9)
 #define LedYellow 	 PEout(7)
 #define LedGreen     PBout(1)
-#define X4    		   PCout(5)//继电器4
+#define X4    			 PCout(5)//继电器4  
 void LED_Init(void);//初始化
 void TurnOnLedRed(void);
-void TurnOnLedellow(void);
+void TurnOnLedYellow(void);
 void TurnOnLedGreen(void);
 		 				    
 #endif

@@ -77,7 +77,7 @@ void TurnOnLedRed(void)
 	}
 	
 }
-void TurnOnLedellow(void)
+void TurnOnLedYellow(void)
 {
 	BeefLedRed=0;
 	LedYellow=1;

@@ -111,35 +111,9 @@ void RunStatus(void)
 	//气缸状态
 	if((*Modbus_InputIO[CylSh01]==0)&&(*Modbus_InputIO[CylRe01]))  		//气缸收缩且没舒张
 	{
-		Cylinder_Data[1]=0;
-	}
-	else if(*Modbus_InputIO[CylSh01]&&(*Modbus_InputIO[CylRe01]==0))  //气缸舒张且没收缩
-	{
-		Cylinder_Data[1]=1;
-	}
-	else
-	{
-		Cylinder_Data[1]=2;
-	}
-	
-	if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸收缩且没舒张为正常状态
-	{
-		Cylinder_Data[2]=0;
-	}
-	else if(*Modbus_InputIO[CylSh02]&&(*Modbus_InputIO[CylRe02]==0))  //气缸舒张且没收缩
-	{
-		Cylinder_Data[2]=1;
-	}
-	else
-	{
-		Cylinder_Data[2]=2;
-	}
-	
-	if((*Modbus_InputIO[CylSh03]==0)&&(*Modbus_InputIO[CylRe03]))  		//气缸收缩且没舒张
-	{
 		Cylinder_Data[3]=0;
 	}
-	else if(*Modbus_InputIO[CylSh03]&&(*Modbus_InputIO[CylRe03]==0))  //气缸舒张且没收缩
+	else if(*Modbus_InputIO[CylSh01]&&(*Modbus_InputIO[CylRe01]==0))  //气缸舒张且没收缩
 	{
 		Cylinder_Data[3]=1;
 	}
@@ -148,17 +122,43 @@ void RunStatus(void)
 		Cylinder_Data[3]=2;
 	}
 	
-	if(*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04])) 		  //气缸收缩且没舒张为正常状态
+	if(*Modbus_InputIO[CylSh02]==0&&(*Modbus_InputIO[CylRe02])) 		  //气缸收缩且没舒张为正常状态
 	{
 		Cylinder_Data[4]=0;
 	}
-	else if(*Modbus_InputIO[CylSh04]&&(*Modbus_InputIO[CylRe04]==0))  //气缸舒张且没收缩
+	else if(*Modbus_InputIO[CylSh02]&&(*Modbus_InputIO[CylRe02]==0))  //气缸舒张且没收缩
 	{
 		Cylinder_Data[4]=1;
 	}
 	else
 	{
 		Cylinder_Data[4]=2;
+	}
+	
+	if((*Modbus_InputIO[CylSh03]==0)&&(*Modbus_InputIO[CylRe03]))  		//气缸收缩且没舒张
+	{
+		Cylinder_Data[5]=0;
+	}
+	else if(*Modbus_InputIO[CylSh03]&&(*Modbus_InputIO[CylRe03]==0))  //气缸舒张且没收缩
+	{
+		Cylinder_Data[5]=1;
+	}
+	else
+	{
+		Cylinder_Data[5]=2;
+	}
+	
+	if(*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04])) 		  //气缸收缩且没舒张为正常状态
+	{
+		Cylinder_Data[6]=0;
+	}
+	else if(*Modbus_InputIO[CylSh04]&&(*Modbus_InputIO[CylRe04]==0))  //气缸舒张且没收缩
+	{
+		Cylinder_Data[6]=1;
+	}
+	else
+	{
+		Cylinder_Data[6]=2;
 	}
 	
 	
@@ -180,6 +180,7 @@ void RunStatus(void)
 	//吹气控制
 	if(StopStart_Flag)//启动则开吹起
 	{
+		AllPower=1;//开总电
 		Cylinder06=0;
 		TurnOnLedGreen();
 	}
@@ -187,8 +188,9 @@ void RunStatus(void)
 	{
 		if(All_ERROR==0)//暂停
 		{
-			TurnOnLedellow();
+			TurnOnLedYellow();
 		}
+		AllPower=0;//关总电
 		Cylinder06=1;
 	}
 	
@@ -315,7 +317,6 @@ static u8 CylinderConnect02(void)
 
 //内构件下压控制
 u32 Systime_cnt=0;
-u8 AllTime_Cnt=0;
 static u8 CylinderStepControl(void)
 {
 	static u8  ErrorTime_cnt=0,Error=0;
@@ -734,7 +735,8 @@ void Wainmming(void)
 			}
 			default :break;
 		}
-		
+		//赋值错误编号
+		Cylinder_Data[7]=All_ERROR;
 		//红灯闪烁
 		TurnOnLedRed();
 		//停转盘
@@ -753,6 +755,7 @@ void Wainmming(void)
 
 
 /*---------------------------------------------------按钮扫描-----------------------------------------------------------*/
+static void AllReSet(void);
 //按键扫描10ms进入一次
 //返回按键值
 static u8 Key_Scan(void)
@@ -776,7 +779,11 @@ static u8 Key_Scan(void)
 	
 	if(PEin(14)==0)  //关机|复位
 	{
-		Connect_Data[ReSet]=1;
+//		Connect_Data[ReSet]=1;
+		if(AllReSet_Flag==0)
+		{
+			AllReSet();
+		}
 	}
 	
 	for(i=1;i<CONNECT_LEN;i++)
@@ -800,7 +807,7 @@ static u8 Key_Scan(void)
 /*---------------------------------------------------整机复位-----------------------------------------------------------*/
 //u8 AllReSet_Flag=0;
 u8 TurnTableTime=0;//复位转盘转动次数
-static void AllReSet(void)
+void AllReSet(void)
 {
 	memset(Status_Data,0,sizeof(Status_Data));//清除状态寄存器ClearAllError
 	/*********复位****************/
@@ -821,6 +828,8 @@ static void AllReSet(void)
 	CylinderStep=0;   //内构
 	CapCylinderStep=0;//瓶盖
 	ScrewCapStep=0;   //拧瓶
+	
+	Cylinder_Data[7]=0;//清除错误
 	All_ERROR=0;
 	Connect_Data[StopStart]=0;//启动按钮失能
 	FiestStart_Flag=0;//初次启动标志清除
@@ -964,8 +973,9 @@ static u8 CylinderAllConnect(u8 key)//不支持连按  //10ms进入一次
 		}
 		case CountClear: 	 //计数清零
 		{
-			
+			Products_Cnt=0;
 			Cylinder_Data[0]=0;//清除计数寄存器
+			Cylinder_Data[1]=0;
 			STMFLASH_Write(FLASH_SAVE_ADDR,ClearProducts,2);//写Flash数据
 			
 			Connect_Data[CountClear]=0;
@@ -1082,12 +1092,9 @@ void ALLControl_10ms(void)
 {
 	
 	static u8 Step_Flag=0;
+	static u32 RunTime_Cnt=0;
 	u8 ERROR=0;
 	
-	if(AllTime_Cnt)
-	{
-		AllTime_Cnt--;
-	}
 	
 	
 	ERROR=CylinderAllConnect(Key_Scan());//key control
@@ -1143,14 +1150,12 @@ void ALLControl_10ms(void)
 			{
 				ScrewCapStep=1;//拧瓶=1;
 				Products_Cnt++;//拧瓶一次数量加1
-				Products_Temp[0]=Products_Cnt&0X0000FFFF;
-				Products_Temp[1]=Products_Cnt&0XFFFF0000>>16;
-				STMFLASH_Write(FLASH_SAVE_ADDR,Products_Temp,2);//写Flash数据
-				
-				STMFLASH_Read(FLASH_SAVE_ADDR,Products_Temp1,2);//读Flash数据
-				Cylinder_Data[0]=(Products_Temp1[1]<<16)+Products_Temp1[0];
-			}
-			
+				Cylinder_Data[0]=Products_Cnt&0X0000FFFF;
+				Cylinder_Data[1]=(Products_Cnt>>16)&0X0000FFFF;
+				Cylinder_Data[2]=Systime_cnt-RunTime_Cnt;//一个周期计时ms
+				RunTime_Cnt=Systime_cnt;
+				STMFLASH_Write(FLASH_SAVE_ADDR,Cylinder_Data,2);//写Flash数据
+			}	
 		}
 				
 		if(Turntable_step==0&&CylinderStep==0&&CapCylinderStep==0&&Step_Flag&&ScrewCapStep==0)//转盘转动完成，且內构下压完成  拧瓶了瓶且完成
@@ -1175,7 +1180,6 @@ void ALLControl_10ms(void)
 				
 		}	
 	}
-	
 }
 
 

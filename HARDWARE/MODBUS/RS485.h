@@ -7,10 +7,9 @@
 void Timer7_Init(void);
 void RS485_Init(void);
 void RS485_Service(void);
-extern u32 Cylinder_Data[20];
+extern u16 Cylinder_Data[20];
 extern u32 Connect_Data[20];
 extern u32 Status_Data[20];
-
 extern vu32 *Modbus_InputIO[100];
 #endif
 
