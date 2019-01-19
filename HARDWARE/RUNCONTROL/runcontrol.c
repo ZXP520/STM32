@@ -761,29 +761,69 @@ static void AllReSet(void);
 static u8 Key_Scan(void)
 {
 	u8 i;
-	static u8 StarStop=0;
+	static u8 StarStop=0,All_ERROR_cnt=0,AllReSet_cnt=0,Start_cnt=0,Stop_cnt=0;
 	
-	if(PBin(10))		//急停是反的
+	if(PBin(10))		//急停是反的,滤波
 	{
-		All_ERROR=13;//急停
+		All_ERROR_cnt++;
+		if(All_ERROR_cnt>20)
+		{
+			All_ERROR_cnt=20;
+			All_ERROR=13;//急停
+		}
+	}
+	else
+	{
+		All_ERROR_cnt=0;
 	}
 	
-	if(PEin(10)==0&&AllReSet_Flag==0)
+	
+	if(PEin(10)==0&&AllReSet_Flag==0) 
 	{
-		Connect_Data[StopStart]=1; 	 //启动  按键按下为低电平
+		Start_cnt++;
+		if(Start_cnt>20)//滤波
+		{
+			Start_cnt=20;
+			Stop_cnt=0;
+			Connect_Data[StopStart]=1; 	 //启动  按键按下为低电平
+		}	
 	}
 	else if(PEin(12)==0)
 	{
-		Connect_Data[StopStart]=0; 	 //停机
+		Stop_cnt++;
+		if(Stop_cnt>20)//滤波
+		{
+			Start_cnt=0;
+			Stop_cnt=20;
+			Connect_Data[StopStart]=0; 	 //停机
+		}
+	}
+	else
+	{
+		Start_cnt=0;
+		Stop_cnt=0;
 	}
 	
 	if(PEin(14)==0)  //关机|复位
 	{
 //		Connect_Data[ReSet]=1;
-		if(AllReSet_Flag==0)
+		AllReSet_cnt++;
+		if(AllReSet_cnt>20)//滤波
 		{
-			AllReSet();
+			AllReSet_cnt=20;
+			if(AllReSet_Flag==0)
+			{
+				AllReSet();
+			}
+			else
+			{
+				AllReSet_cnt=0;
+			}
 		}
+	}
+	else
+	{
+		AllReSet_cnt=0;
 	}
 	
 	for(i=1;i<CONNECT_LEN;i++)
