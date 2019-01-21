@@ -486,6 +486,7 @@ static u8 CylinderConnect04(void)
 
 
 ///瓶盖下压控制
+u8 Light04_Flag=0;
 static u8 CapCylinderControl(void)
 {
 	static u8  ErrorTime_cnt=0,Error=0;
@@ -495,11 +496,12 @@ static u8 CapCylinderControl(void)
 		case 0: break;
 		case 1://气缸4收缩
 		{
-			if(*Modbus_InputIO[CylRe04]==0&&(*Modbus_InputIO[CylSh04])) 		  //气缸2舒张且没收缩为正常状态
+			if(*Modbus_InputIO[CylRe04]==0&&(*Modbus_InputIO[CylSh04])) 		  //气缸4舒张且没收缩为正常状态
 			{
-				Cylinder04=1;//气缸2收缩
+				Cylinder04=1;//气缸4收缩
 				ErrorTime_cnt=0;
 				CapCylinderStep=2;
+				Light04_Flag =0x01;
 			}
 			else
 			{
@@ -511,13 +513,14 @@ static u8 CapCylinderControl(void)
 	  case 2://光电检测有料则气缸4推料
 		{
 						
-			if(*Modbus_InputIO[Light04]==0)//光电3滤波test
+			if(Light04_Flag&0x02)//光电4滤波test
 			{	
 				if(*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04])) 		  //气缸4收缩且没舒张为正常状态
 				{
 					Cylinder04=0;//气缸4舒张
 					ErrorTime_cnt=0;
 					CapCylinderStep=3;
+					Light04_Flag =0;
 				}
 				else
 				{
@@ -610,6 +613,7 @@ static u8 CapCylinderControl(void)
 	{
 		ErrorTime_cnt=0;
 		CapCylinderStep=20;//错误
+		Light04_Flag =0;
 		return Error;//返回错误气缸号
 	}
 	return 0;

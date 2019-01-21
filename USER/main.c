@@ -14,6 +14,7 @@
 //串口实验  
 
 extern u8 Flag_1ms,Flag_5ms,Flag_10ms,Flag_20ms,Flag_100ms,Flag_500ms,Flag_1000ms; //时间标志
+extern u8 Light04_Flag;//瓶盖进料光电标志
 Machine Mach;
 static void Stm32_Init(void)
 {
@@ -34,6 +35,14 @@ int main(void)
 	Stm32_Init();
  	while(1)
 	{
+		
+		if(Light04_Flag&0x01&&*Modbus_InputIO[CylSh04]==0&&(*Modbus_InputIO[CylRe04]))//us级别//气缸4收缩且没舒张为正常状态
+		{
+			if(*Modbus_InputIO[Light04]==0)//光电闪动
+			{
+				Light04_Flag =0x02;
+			}
+		}
 		
 		if(Flag_1ms)  //1MS
 		{
